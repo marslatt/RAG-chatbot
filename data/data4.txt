@@ -1,0 +1,9 @@
+In addition to responding to bomb threats, Stewart and the team are using Spot's Autowalk capabilities to preemptively map out schools and houses of worship that intruders might attempt to enter. The officers drive Spot through a given building and identify the most advantageous routes for the robot to take in the case of an active shooter, for example. 
+
+"That was an intriguing part of the conversation with the team at Montgomery County, saying they wanted to take Spot to potential targets, have it do the Autowalk so that the route is basically in its brain," said Lovendale.
+
+The process involves placing fiducial markers—which look similar to QR codes—on walls at strategic locations inside the building. These markers create a route for Spot to follow. A team member drives the robot from marker to marker as part of a single mission, much like training a dog to maneuver an obstacle course. 
+
+The entire route is eventually recorded and stored in Spot’s memory. When later deployed, Spot will come to a given fiducial and understand exactly what to do next, such as take a picture before traveling to the next marker.
+
+"The mapping of the school is actually much easier than we expected," said deputy sheriff and bomb squad member John Cagliola. "It's an awesome feature and it works every time, which is a good thing."
