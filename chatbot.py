@@ -3,30 +3,53 @@ from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
-# from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from langchain_openai import ChatOpenAI
-# from transformers import AutoModelForCausalLM
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from chromadb import PersistentClient
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+# from chromadb.utils.embedding_functions import HuggingFaceEmbeddingFunction
+from chromadbx import DocumentSHA256Generator
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_history_aware_retriever
+from langchain_core.prompts import MessagesPlaceholder
+from langchain_core.messages import AIMessage, HumanMessage
+# from langchain.llms import HuggingFacePipeline
+# from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from datetime import datetime
 import os
-# import torch
 import constants
 
 
 def load_and_split_docs():
     """
-    Load and Split Documents
+    Load and split documents
     """
 
     # path to the directory containing .txt documents
-    docs_path = "." + os.sep + "data"
+    docs_path = "." + os.sep + constants.DATA_DIR
 
     # load documents
-    loader = DirectoryLoader(docs_path, glob='**/*.txt', loader_cls=TextLoader)
+    loader = DirectoryLoader(
+        docs_path,
+        glob='**/*.txt',
+        loader_cls=TextLoader
+    )
     raw_documents = loader.load()
 
     # split documents into chunks
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = CharacterTextSplitter(
+        separator=".",  # split on a full-stop
+        chunk_size=1000,
+        chunk_overlap=50  # overlap to avoid loss of information
+    )
     documents = text_splitter.split_documents(raw_documents)
 
     return documents
@@ -34,166 +57,168 @@ def load_and_split_docs():
 
 def init_chromadb(documents):
     """
-    Set Up Embeddings and Chroma Vector Database
+    Set up Chroma vector database
     """
 
+    # path to the directory containing .txt documents
+    db_path = "." + os.sep + constants.CHROMA_DIR
+    cln_name = "doc"
+
+    # Chroma client to save and load the database from the local machine
+    # data will be persisted automatically and loaded on start (if it exists)
+    client = PersistentClient(path=db_path)
+
     '''
-    embeddings = AzureOpenAIEmbeddings(
-        azure_deployment=os.environ.get("AZURE_DEPLOYMENT_EMBEDDINGS"),
-        openai_api_version=os.environ.get("AZURE_OPENAI_API_VERSION"),
+    # for cleaner reloading, delete old collection if exists
+    try:
+        client.get_collection(name=cln_name)
+        client.delete_collection(name=cln_name)
+    except Exception as err:
+        # logger.logg(err)
+        pass
+    '''
+
+    embedding_func = OpenAIEmbeddingFunction(api_key=constants.OPENAI_API_KEY)
+
+    collection = client.get_or_create_collection(
+        name=cln_name,
+        embedding_function=embedding_func
     )
-    '''
 
-    '''
-    embeddings = HuggingFaceBgeEmbeddings(
-        model_name=constants.HF_MODEL_EMBEDDINGS,
-        model_kwargs={'device': 'cpu'},
-        encode_kwargs={'normalize_embeddings': True}
-    )
-    '''
+    unique_docs = list(set(doc.page_content for doc in documents))
+    doc_ids = DocumentSHA256Generator(documents=unique_docs)
 
-    '''
-    embeddings = HuggingFaceBgeEmbeddings()
-    '''
+    try:
+        collection.upsert(
+            ids=doc_ids,
+            documents=unique_docs,
+        )
+    except Exception as err:
+        # logger.logg(err)
+        # print(err)
+        pass
 
-    # set up embeddings
     embeddings = OpenAIEmbeddings(openai_api_key=constants.OPENAI_API_KEY)
 
-    # Set up chroma database
-    db = Chroma.from_documents(
-        documents,
-        embeddings,
-        persist_directory="chroma_db",
+    db = Chroma(
+        client=client,
+        collection_name=cln_name,
+        embedding_function=embeddings,
+        persist_directory=db_path,
     )
 
-    return db
+    # return db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+    return db.as_retriever()
 
 
 def configure_llm():
     """
-    Configure the Language Model
+    Create and configure LLM
     """
 
-    '''
-    llm = AzureChatOpenAI(
-        azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
-        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-        openai_api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-        api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-        verbose=False,
-        temperature=0.3,
+    llm = ChatOpenAI(
+        model=constants.OPENAI_LLM,
+        openai_api_key=constants.OPENAI_API_KEY
     )
-    '''
-
-    '''
-    llm = AutoModelForCausalLM.from_pretrained(
-            constants.AUTO_MODEL_FOR_CASUAL_LLM,
-            device_map='auto',
-            torch_dtype=torch.float32,
-            token=True,
-            load_in_8bit=False
-        )
-    '''
-
-    # Configure LLM
-    llm = ChatOpenAI(model="gpt-4o", openai_api_key=constants.OPENAI_API_KEY)
 
     return llm
 
 
 def create_prompt():
     """
-    Create the Prompt Template
+    Create and configure prompt
     """
 
-    # create prompt template
+    # system prompt template
+    system_prompt = (
+        "You are an AI assistant for question-answering tasks."
+        "Given only the following context: {context}"
+        "Answer the following question: {question}"
+        "Use five sentences maximum and give concise answer."
+    )
+
     prompt = ChatPromptTemplate.from_messages(
         [
-            (
-                "system",
-                """You are an AI Chatbot. 
-                   Given only the following context: {context}
-                   Answer the following question: {question}
-                   AI: """,
-            ),
-            (
-                "human",
-                "{question}",
-            ),
+            ("system", system_prompt),
+            ("human", "{question}"),
         ]
     )
 
     return prompt
 
 
-def create_chain(prompt, llm):
+def create_chain(llm, retriever):
     """
-    Create the LLM Chain
+    Create conversational history-aware retrieval chain
     """
 
-    # create llm chain with the prompt template
-    chain = prompt | llm
+    # make the output appear as string
+    # output_parser = StrOutputParser()
 
-    ''' 
-    # Create a Conversational Retrieval Chain
-    
-    # create pipeline + tokenizer
-     
-    self.chain = ConversationalRetrievalChain.from_llm(
-        pipeline,
-        chain_type="stuff",
-        retriever=db.as_retriever(search_kwargs={"k": 1}),
-        condense_question_prompt=prompt,
-        return_source_documents=True
-    )    
-    '''
+    contextualized_prompt = ChatPromptTemplate.from_messages([
+        ("system", "Based on chat history and user question, make the question understandable without history."),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("user", "{input}"),
+    ])
 
-    return chain
+    contextualized_retriever = create_history_aware_retriever(llm, retriever, contextualized_prompt)
+
+    qa_prompt = ChatPromptTemplate.from_messages([
+        ("system", "Answer the user question based on the below context:\\n\\n{context}"),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("user", "{input}"),
+    ])
+
+    document_chain = create_stuff_documents_chain(llm, qa_prompt)
+
+    retrieval_chain = create_retrieval_chain(contextualized_retriever, document_chain)
+
+    return retrieval_chain
 
 
-def query_chromadb(db, query, chain):
+def ask_question(chain, user_input, chat_history):
+    """
+    Perform history-aware QA task
+    """
 
-    # perform similarity search in chroma database
-    documents = db.similarity_search_with_score(query, 3)
-
-    # generate response using LLM
     response = chain.invoke(
         {
-            "question": query,
-            "context": documents, #[0].page_content,
+            "chat_history": chat_history,
+            "input": user_input
         }
     )
 
-    return response
+    return response['answer']
 
 
 def main():
     """
-    Build the Chatbot with CLI Interface
+    Build 'Chatbot' assistant with CLI Interface
     """
 
-    txt_docs = load_and_split_docs()
-    chroma_db = init_chromadb(txt_docs)
-    openai_llm = configure_llm()
-    chat_prompt = create_prompt()
-    conv_chain = create_chain(chat_prompt, openai_llm)
+    print("\nHello! I am a chatbot. I can answer questions based on the content of a your documents.\n")
 
-    print("\nHello! I am a chatbot. I can answer questions based on the content of a vector database of documents.\n")
+    txt_docs = load_and_split_docs()
+    retriever = init_chromadb(txt_docs)
+    openai_llm = configure_llm()
+    conv_chain = create_chain(openai_llm, retriever)
+    chat_history = []
 
     while True:
         current_datetime = datetime.now()
         user_input = input("Do you have any questions? To exit, type 'bye': ")
 
-        if user_input.lower() == "bye":
-            print("\nBye! Have a nice day!\n")
-            break
-
-        answer = query_chromadb(chroma_db, user_input, conv_chain)
-
+        answer = ask_question(conv_chain, user_input, chat_history)
         elapsed_time = datetime.now() - current_datetime
 
-        print("\nChatbot: ", answer.content)
+        print("\nChatbot: ", answer)
         print("\n Time elapsed: ", elapsed_time.total_seconds(), "seconds \n")
+
+        if user_input.lower() == "bye":
+            break
+        else:
+            chat_history.append(user_input)  # HumanMessage(content=user_input))
+            chat_history.append(answer)  # AIMessage(content=answer))
 
 
 if __name__ == '__main__':
