@@ -52,9 +52,9 @@ class TxtChatBot:
 
         self.docs = text_splitter.split_documents(raw_documents)
 
-    def configure_chromadb(self):
+    def configure_retriever(self):
         """
-        Set up Chroma vector database
+        Set up Chroma vector database and retriever
         """
 
         # path to the directory containing .txt documents
@@ -149,7 +149,7 @@ class TxtChatBot:
         """
 
         self.load_and_split_docs()
-        self.configure_chromadb()
+        self.configure_retriever()
         self.configure_llm()
         self.create_chain()
 
@@ -158,7 +158,7 @@ class TxtChatBot:
         Perform history-aware QA task
         """
 
-        # TODO check if chatbot  configured properly
+        # TODO check if chatbot was configured properly
 
         response = self.chain.invoke(
             {
