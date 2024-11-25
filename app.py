@@ -20,10 +20,6 @@ class OutputData(BaseModel):
     answer: str
 
 
-# Load a local LLM using Hugging Face Transformers
-# Other models for QA: bert-base-cased, distilbert/distilbert-base-uncased, stabilityai/stablelm-zephyr-3b
-# qa_pipeline = pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
-
 chatbot = TxtChatBot()
 chatbot.init_chatbot()
 
@@ -32,8 +28,6 @@ chatbot.init_chatbot()
 @app.post("/chat", response_model=OutputData)
 async def chat(request: InputData):
     try:
-        # response = qa_pipeline(question=request.question, context=request.context)
-        # return OutputData(answer=response['answer'])
         answer = chatbot.generate_response(request.question)
         return OutputData(answer=answer)
     except Exception as e:
