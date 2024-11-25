@@ -1,18 +1,18 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from transformers import pipeline
 import uvicorn
 
 from chatbot import TxtChatBot
 
 # Create a FastAPI app
 app = FastAPI()
+chatbot = TxtChatBot()
+chatbot.init_chatbot()
 
 
 # Create a class for the input data
 class InputData(BaseModel):
     question: str
-    # context: str
 
 
 # Create a class for the output data
@@ -20,11 +20,12 @@ class OutputData(BaseModel):
     answer: str
 
 
-chatbot = TxtChatBot()
-chatbot.init_chatbot()
+@app.get("/")
+async def root():
+    return OutputData(answer="Hello World!")
 
 
-# Create a route for the web application
+# Create a 'chat' route for the web application
 @app.post("/chat", response_model=OutputData)
 async def chat(request: InputData):
     try:
