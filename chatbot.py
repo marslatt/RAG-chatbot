@@ -2,12 +2,13 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
+# from langchain_openai import OpenAIEmbeddings
+# from langchain_openai import ChatOpenAI
+from transformers import AutoModelForCausalLM
 from chromadb import PersistentClient
-from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
-# from chromadb.utils.embedding_functions import HuggingFaceEmbeddingFunction
-# from langchain.embeddings import HuggingFaceEmbeddings
+# from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+from chromadb.utils import embedding_functions
+from langchain_huggingface import HuggingFaceEmbeddings
 from chromadbx import DocumentSHA256Generator
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -75,7 +76,9 @@ class TxtChatBot:
             pass
         '''
 
-        embedding_func = OpenAIEmbeddingFunction(api_key=constants.OPENAI_API_KEY)
+        # TODO
+        # embedding_func = OpenAIEmbeddingFunction(api_key=constants.OPENAI_API_KEY)
+        embedding_func = embedding_functions.SentenceTransformerEmbeddingFunction(model_name=constants.HF_LLM)
 
         collection = client.get_or_create_collection(
             name=cln_name,
@@ -95,7 +98,9 @@ class TxtChatBot:
             # print(err)
             pass
 
-        embeddings = OpenAIEmbeddings(openai_api_key=constants.OPENAI_API_KEY)
+        # TODO
+        # embeddings = OpenAIEmbeddings(openai_api_key=constants.OPENAI_API_KEY)
+        embeddings = HuggingFaceEmbeddings(model_name=constants.HF_LLM)
 
         db = Chroma(
             client=client,
@@ -104,18 +109,21 @@ class TxtChatBot:
             persist_directory=db_path,
         )
 
-        # self.retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-        self.retriever = db.as_retriever()
+        self.retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+        # self.retriever = db.as_retriever()
 
     def configure_llm(self):
         """
         Create and configure LLM
         """
-
+        '''
         self.llm = ChatOpenAI(
             model=constants.OPENAI_LLM,
             openai_api_key=constants.OPENAI_API_KEY
-        )
+        )'''
+
+        # TODO
+        self.llm = AutoModelForCausalLM.from_pretrained(constants.HF_LLM)  # bert-base-cased
 
     def create_chain(self):
         """
@@ -172,4 +180,3 @@ class TxtChatBot:
         self.chat_history.append(answer)
 
         return answer
-

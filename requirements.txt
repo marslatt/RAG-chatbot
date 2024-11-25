@@ -2,6 +2,7 @@ langchain
 langchain_chroma
 langchain_community
 langchain_core
-langchain_openai
 chromadb
 chromadbx
+langchain-huggingface
+transformers
