@@ -4,7 +4,7 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
 # from langchain_openai import OpenAIEmbeddings
 # from langchain_openai import ChatOpenAI
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForQuestionAnswering
 from chromadb import PersistentClient
 # from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 from chromadb.utils import embedding_functions
@@ -15,6 +15,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_history_aware_retriever
 # from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts.chat  import ChatPromptValue
 import os
 import constants
 
@@ -123,11 +124,13 @@ class TxtChatBot:
         )'''
 
         # TODO
-        self.llm = AutoModelForCausalLM.from_pretrained(constants.HF_LLM)  # bert-base-cased
+        self.llm = AutoModelForQuestionAnswering.from_pretrained(constants.HF_LLM)
 
     def create_chain(self):
         """
         Create conversational history-aware retrieval chain
+
+        https://python.langchain.com/v0.2/docs/tutorials/qa_chat_history/
         """
 
         # make the output appear as string
@@ -147,7 +150,16 @@ class TxtChatBot:
             ("user", "{input}"),
         ])
 
-        document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
+        def safe_llm(input_str: str) -> str:
+            if isinstance(input_str, ChatPromptValue):
+                # input_str = str(input_str)
+                input_str = input_str.to_messages()
+
+            return self.llm(input_str)
+
+        # TODO TypeError: 'ChatPromptValue' object is not subscriptable
+        # document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
+        document_chain = create_stuff_documents_chain(safe_llm, qa_prompt)
 
         self.chain = create_retrieval_chain(contextualized_retriever, document_chain)
 
@@ -166,8 +178,7 @@ class TxtChatBot:
         Perform history-aware QA task
         """
 
-        # TODO check if chatbot was configured properly
-
+        # TODO TypeError: 'ChatPromptValue' object is not subscriptable
         response = self.chain.invoke(
             {
                 "chat_history": self.chat_history,

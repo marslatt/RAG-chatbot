@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
+# from transformers import pipeline
 
+import constants
 from chatbot import TxtChatBot
 
 # Create a FastAPI app
@@ -9,10 +11,13 @@ app = FastAPI()
 chatbot = TxtChatBot()
 chatbot.init_chatbot()
 
+# qa_pipeline = pipeline("question-answering", model=constants.HF_LLM)
+
 
 # Create a class for the input data
 class InputData(BaseModel):
     question: str
+    # context: str
 
 
 # Create a class for the output data
@@ -29,6 +34,8 @@ async def root():
 @app.post("/chat", response_model=OutputData)
 async def chat(request: InputData):
     try:
+        # response = qa_pipeline(question=request.question, context=request.context)
+        # return OutputData(answer=response['answer'])
         answer = chatbot.generate_response(request.question)
         return OutputData(answer=answer)
     except Exception as e:
