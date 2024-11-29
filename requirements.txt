@@ -1,8 +1,11 @@
-langchain
+langchain~=0.3.7
 langchain_chroma
 langchain_community
 langchain_core
-chromadb
-chromadbx
-langchain-huggingface
-transformers
+langchain_openai
+chromadb~=0.5.18
+chromadbx~=0.0.6
+uvicorn~=0.32.0
+requests~=2.32.3
+fastapi~=0.115.5
+pydantic~=2.9.2

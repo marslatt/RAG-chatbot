@@ -6,13 +6,10 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from chromadb import PersistentClient
 from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
-# from chromadb.utils.embedding_functions import HuggingFaceEmbeddingFunction
-# from langchain.embeddings import HuggingFaceEmbeddings
 from chromadbx import DocumentSHA256Generator
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_history_aware_retriever
-# from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import os
 import constants
