@@ -5,6 +5,7 @@ import requests
 import time
 import contextlib
 import threading
+from datetime import datetime
 from chatbot import TxtChatBot
 
 # Create a FastAPI app
@@ -66,12 +67,16 @@ def main():
         print("Hello! I am a chatbot. I can answer questions based on the content of a your documents.")
 
         while True:
+            current_datetime = datetime.now()
             user_input = input("Do you have any questions? To exit, type 'bye': ")
 
             # response = requests.get(f"http://localhost:8000/")
             response = requests.post("http://localhost:8000/chat", json={'question': user_input})
+            answer = response.json()['answer']
+            elapsed_time = datetime.now() - current_datetime
 
-            print("TxtChatbot response: ", response.json()['answer'])
+            print("TxtChatbot answer: ", answer)
+            print("Time elapsed: ", elapsed_time.total_seconds(), "seconds")
 
             if user_input.lower() == "bye":
                 break
