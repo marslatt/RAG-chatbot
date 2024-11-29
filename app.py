@@ -1,9 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
-# from transformers import pipeline
-
-import constants
+import requests
+import time
+import contextlib
+import threading
 from chatbot import TxtChatBot
 
 # Create a FastAPI app
@@ -11,13 +12,10 @@ app = FastAPI()
 chatbot = TxtChatBot()
 chatbot.init_chatbot()
 
-# qa_pipeline = pipeline("question-answering", model=constants.HF_LLM)
-
 
 # Create a class for the input data
 class InputData(BaseModel):
     question: str
-    # context: str
 
 
 # Create a class for the output data
@@ -34,13 +32,52 @@ async def root():
 @app.post("/chat", response_model=OutputData)
 async def chat(request: InputData):
     try:
-        # response = qa_pipeline(question=request.question, context=request.context)
-        # return OutputData(answer=response['answer'])
         answer = chatbot.generate_response(request.question)
         return OutputData(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# https://github.com/fastapi/fastapi/discussions/7457
+class Server(uvicorn.Server):
+    def install_signal_handlers(self):
+        pass
+
+    @contextlib.contextmanager
+    def run_in_thread(self):
+        thread = threading.Thread(target=self.run)
+        thread.start()
+        try:
+            while not self.started:
+                time.sleep(1e-3)
+            yield
+        finally:
+            self.should_exit = True
+            thread.join()
+
+
+def main():
+    config = uvicorn.Config(app, host="127.0.0.1", port=8000, log_level="info")
+    server = Server(config=config)
+
+    with server.run_in_thread():
+        # Server started.
+
+        print("Hello! I am a chatbot. I can answer questions based on the content of a your documents.")
+
+        while True:
+            user_input = input("Do you have any questions? To exit, type 'bye': ")
+
+            # response = requests.get(f"http://localhost:8000/")
+            response = requests.post("http://localhost:8000/chat", json={'question': user_input})
+
+            print("TxtChatbot response: ", response.json()['answer'])
+
+            if user_input.lower() == "bye":
+                break
+
+        # Server stopped.
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    main()

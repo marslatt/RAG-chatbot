@@ -2,20 +2,18 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_chroma import Chroma
-# from langchain_openai import OpenAIEmbeddings
-# from langchain_openai import ChatOpenAI
-from transformers import AutoModelForQuestionAnswering
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 from chromadb import PersistentClient
-# from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
-from chromadb.utils import embedding_functions
-from langchain_huggingface import HuggingFaceEmbeddings
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+# from chromadb.utils.embedding_functions import HuggingFaceEmbeddingFunction
+# from langchain.embeddings import HuggingFaceEmbeddings
 from chromadbx import DocumentSHA256Generator
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_history_aware_retriever
 # from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.prompts.chat  import ChatPromptValue
 import os
 import constants
 
@@ -77,9 +75,7 @@ class TxtChatBot:
             pass
         '''
 
-        # TODO
-        # embedding_func = OpenAIEmbeddingFunction(api_key=constants.OPENAI_API_KEY)
-        embedding_func = embedding_functions.SentenceTransformerEmbeddingFunction(model_name=constants.HF_LLM)
+        embedding_func = OpenAIEmbeddingFunction(api_key=constants.OPENAI_API_KEY)
 
         collection = client.get_or_create_collection(
             name=cln_name,
@@ -99,9 +95,7 @@ class TxtChatBot:
             # print(err)
             pass
 
-        # TODO
-        # embeddings = OpenAIEmbeddings(openai_api_key=constants.OPENAI_API_KEY)
-        embeddings = HuggingFaceEmbeddings(model_name=constants.HF_LLM)
+        embeddings = OpenAIEmbeddings(openai_api_key=constants.OPENAI_API_KEY)
 
         db = Chroma(
             client=client,
@@ -110,27 +104,22 @@ class TxtChatBot:
             persist_directory=db_path,
         )
 
-        self.retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-        # self.retriever = db.as_retriever()
+        # self.retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+        self.retriever = db.as_retriever()
 
     def configure_llm(self):
         """
         Create and configure LLM
         """
-        '''
+
         self.llm = ChatOpenAI(
             model=constants.OPENAI_LLM,
             openai_api_key=constants.OPENAI_API_KEY
-        )'''
-
-        # TODO
-        self.llm = AutoModelForQuestionAnswering.from_pretrained(constants.HF_LLM)
+        )
 
     def create_chain(self):
         """
         Create conversational history-aware retrieval chain
-
-        https://python.langchain.com/v0.2/docs/tutorials/qa_chat_history/
         """
 
         # make the output appear as string
@@ -150,16 +139,7 @@ class TxtChatBot:
             ("user", "{input}"),
         ])
 
-        def safe_llm(input_str: str) -> str:
-            if isinstance(input_str, ChatPromptValue):
-                # input_str = str(input_str)
-                input_str = input_str.to_messages()
-
-            return self.llm(input_str)
-
-        # TODO TypeError: 'ChatPromptValue' object is not subscriptable
-        # document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
-        document_chain = create_stuff_documents_chain(safe_llm, qa_prompt)
+        document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
 
         self.chain = create_retrieval_chain(contextualized_retriever, document_chain)
 
@@ -178,7 +158,8 @@ class TxtChatBot:
         Perform history-aware QA task
         """
 
-        # TODO TypeError: 'ChatPromptValue' object is not subscriptable
+        # TODO check if chatbot was configured properly
+
         response = self.chain.invoke(
             {
                 "chat_history": self.chat_history,
