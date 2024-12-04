@@ -128,6 +128,10 @@ class TxtChatBot:
             ("user", "{input}"),
         ])
 
+        # Create a chain that takes conversation history and returns documents.
+        # If there is no chat_history, then the input is just passed directly to the retriever. If there is
+        # chat_history, then the prompt and LLM will be used to generate a search query. That search query is
+        # then passed to the retriever.
         contextualized_retriever = create_history_aware_retriever(self.llm, self.retriever, contextualized_prompt)
 
         qa_prompt = ChatPromptTemplate.from_messages([
@@ -136,8 +140,18 @@ class TxtChatBot:
             ("user", "{input}"),
         ])
 
+        # Create a chain for passing a list of Documents to a model.
+        # prompt (param) - Prompt used for formatting each document into a string.
+        # Returns LCEL Runnable. The input is a dictionary that must have a “context” key that maps to a List[Document],
+        # and any other input variables expected in the prompt. The Runnable return type depends on output_parser used.
         document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
 
+        # Create retrieval chain that retrieves documents and then passes them on.
+        # retriever (param) – Retriever-like object that returns list of documents.
+        # chain (param) – Runnable that takes inputs and produces a string output. The inputs to this will be any
+        # original inputs to this chain, a new context key with the retrieved documents, and chat_history (if not
+        # present in the inputs) with a value of [] to easily enable conversational retrieval.
+        # Returns an LCEL Runnable
         self.chain = create_retrieval_chain(contextualized_retriever, document_chain)
 
     def init_chatbot(self):

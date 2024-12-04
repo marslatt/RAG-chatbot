@@ -44,6 +44,7 @@ class Server(uvicorn.Server):
     def install_signal_handlers(self):
         pass
 
+    # https://docs.python.org/3/library/contextlib.html
     @contextlib.contextmanager
     def run_in_thread(self):
         thread = threading.Thread(target=self.run)
@@ -72,7 +73,7 @@ def main():
 
             # response = requests.get(f"http://localhost:8000/")
             response = requests.post("http://localhost:8000/chat", json={'question': user_input})
-            answer = response.json()['answer']
+            answer = response.json()  # ['answer']
             elapsed_time = datetime.now() - current_datetime
 
             print("TxtChatbot answer: ", answer)
