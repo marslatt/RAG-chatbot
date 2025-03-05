@@ -1,5 +1,7 @@
-.idea
-.venv
 __pycache__
 chroma_db
+<<<<<<< Updated upstream
 constants.py
+=======
+data
+>>>>>>> Stashed changes
