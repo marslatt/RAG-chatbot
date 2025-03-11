@@ -1,10 +1,10 @@
-# https://fastapi.tiangolo.com/tutorial/bigger-applications
-# https://fastapi.tiangolo.com/tutorial/dependencies
-# https://fastapi.tiangolo.com/advanced/events/
-
 from app.routers import ping_router
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
+
+# https://fastapi.tiangolo.com/tutorial/bigger-applications
+# https://fastapi.tiangolo.com/tutorial/dependencies
+# https://fastapi.tiangolo.com/advanced/events/
 
 # executed once at startup, before the application starts receiving requests
 # useful for setting up resources that you need to use for the whole app, and that are shared among requests
@@ -12,8 +12,7 @@ from fastapi import Depends, FastAPI
 async def lifespan(app: FastAPI):
     # Setup lifespan routine
     yield
-    # Clean up  and release the resources
-     
+    # Clean up  and release the resources     
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -23,7 +22,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     ) 
 
-    app.include_router(router=ping_router)
+    app.include_router(router=ping_router) 
 
     return app
 

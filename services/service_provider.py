@@ -2,7 +2,6 @@ from services.rag_service import RagService
 from services.setup_service import SetupService
 from services.llm_service import LlmService
 
-
 class ServiceProvider:
     '''
     Services dependency provider

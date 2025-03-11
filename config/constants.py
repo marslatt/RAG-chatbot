@@ -8,10 +8,14 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 OPENAI_LLM = "gpt-4o"
 
-CONFIG_DIR = f".{os.sep}config" 
+CONFIG_DIR = "." + os.sep + "config" 
 
-LOG_DIR = f".{os.sep}log"
+LOG_DIR = "." + os.sep + "log"
 
-CHROMA_DIR = f".{os.sep}chroma_db" 
+# LOGS_DIR = LOG_DIR + os.sep + "logs"
 
-FILES_DIR = f".{os.sep}files" 
+CHROMA_DIR = "." + os.sep + "chroma" 
+
+DB_DIR = CHROMA_DIR + os.sep + "db"
+
+FILES_DIR = CHROMA_DIR + os.sep + "files" 

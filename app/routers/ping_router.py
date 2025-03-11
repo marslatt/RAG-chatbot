@@ -1,16 +1,16 @@
-from fastapi import APIRouter  
-from log.logger import logger
+from fastapi import APIRouter, Request 
+from log import logger
 from fastapi import HTTPException 
-from data.base_data import BaseOutputData, BaseInputData 
+from data import BaseOutputData 
 
-ping_router = APIRouter()
+ping_router = APIRouter() 
  
 @ping_router.get(path="/ping", response_model=BaseOutputData)
 async def ping(
-    request: BaseInputData 
+    request: Request 
 ) -> BaseOutputData:
     try:
-        response = f"[{request.app.title}] - [{request.app.version}]" 
+        response = f"{request.app.title} - v.{request.app.version}" 
     except Exception as e: 
             logger.error(e.message)
             raise HTTPException(
