@@ -12,12 +12,14 @@ class Colors:
     WHITE = "\033[97m"
     RESET = "\033[0m"
 
+FMT = "%(levelname)s - [%(asctime)s.%(msecs)03d] - [%(filename)s:%(lineno)s - %(funcName)s] - %(message)s"
+
 class ColoredFormatter(logging.Formatter):
     ''''
     Colored formatter for logging    
     '''   
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(fmt=FMT, *args, **kwargs)
 
     def format(self, record):
         color = Colors.WHITE  # default to white
@@ -33,7 +35,7 @@ class ColoredFormatter(logging.Formatter):
             color = Colors.PURPLE
 
         record.levelname = f"{color}{record.levelname}{Colors.RESET}" 
-        # record.asctime = f"{Colors.GREEN}{record.asctime}{Colors.RESET}" 
+        record.asctime = f"{Colors.GREEN}{record.asctime}{Colors.RESET}" 
         record.filename = f"{Colors.BLUE}{record.filename}{Colors.RESET}" 
         record.lineno = f"{Colors.BLUE}{record.lineno}{Colors.RESET}" 
         return super().format(record)

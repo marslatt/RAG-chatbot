@@ -24,7 +24,7 @@ class SetupService:
  
     def create_dirs(): 
         '''
-        Create 'logs', 'chroma', 'files' and 'db' directories in non existant
+        Create 'chroma', 'files' and 'db' directories in non existant
         ''' 
         # if not os.path.exists(LOGS_DIR):
             # os.makedirs(LOGS_DIR)

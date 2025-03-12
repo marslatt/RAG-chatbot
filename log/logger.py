@@ -5,8 +5,7 @@ import threading
 from config.constants import LOG_DIR
 from log.formatter import ColoredFormatter
 
-# https://docs.python.org/3/library/configparser.html#supported-ini-file-structure
-# https://signoz.io/guides/what-is-pythons-default-logging-formatter/
+# https://docs.python.org/3/library/configparser.html#supported-ini-file-structure 
 
 class SingletonLogger():
   ''''
@@ -37,13 +36,12 @@ class SingletonLogger():
       self.logger = logging.getLogger() 
       self._set_formatter() 
 
-  def _set_formatter(self):
-      format = "%(levelname)s - [%(asctime)s.%(msecs)03d] - [%(filename)s:%(lineno)s - %(funcName)s] - %(message)s"
-      formatter = ColoredFormatter(format)
+  def _set_formatter(self):      
+      formatter = ColoredFormatter()
       if self.logger.hasHandlers():
          for handler in self.logger.handlers:
             if not isinstance(handler, logging.FileHandler):
-              handler.formatter = formatter 
+              handler.setFormatter(formatter) 
       else:
          handler = logging.StreamHandler()
          handler.setFormatter(formatter)

@@ -1,4 +1,4 @@
-[92mINFO[0m - [2025-03-11 16:54:52,367.367] - [[94mmain.py[0m:[94m29[0m - start_uvicorn] - Starting Uvicorn...
-[96mDEBUG[0m - [2025-03-11 16:54:52,372.372] - [[94mproactor_events.py[0m:[94m625[0m - __init__] - Using proactor: IocpProactor
-[96mDEBUG[0m - [2025-03-11 16:54:52,378.378] - [[94m_trace.py[0m:[94m47[0m - trace] - close.started
-[96mDEBUG[0m - [2025-03-11 16:54:52,378.378] - [[94m_trace.py[0m:[94m47[0m - trace] - close.complete
+INFO - [2025-03-12 09:52:34,488.488] - [main.py:29 - start_uvicorn] - Starting Uvicorn...
+DEBUG - [2025-03-12 09:52:34,491.491] - [proactor_events.py:625 - __init__] - Using proactor: IocpProactor
+DEBUG - [2025-03-12 09:52:34,498.498] - [_trace.py:47 - trace] - close.started
+DEBUG - [2025-03-12 09:52:34,498.498] - [_trace.py:47 - trace] - close.complete
