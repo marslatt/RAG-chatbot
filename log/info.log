@@ -1,4 +1,36 @@
-INFO - [2025-03-12 09:52:34,488.488] - [main.py:29 - start_uvicorn] - Starting Uvicorn...
-DEBUG - [2025-03-12 09:52:34,491.491] - [proactor_events.py:625 - __init__] - Using proactor: IocpProactor
-DEBUG - [2025-03-12 09:52:34,498.498] - [_trace.py:47 - trace] - close.started
-DEBUG - [2025-03-12 09:52:34,498.498] - [_trace.py:47 - trace] - close.complete
+INFO - [2025-03-12 21:19:33,497.497] - [main.py:29 - start_uvicorn] - Starting Uvicorn...
+DEBUG - [2025-03-12 21:19:33,503.503] - [proactor_events.py:625 - __init__] - Using proactor: IocpProactor
+DEBUG - [2025-03-12 21:19:40,311.311] - [retry.py:286 - from_int] - Converted retries value: 2 -> Retry(total=2, connect=None, read=None, redirect=None, status=None)
+INFO - [2025-03-12 21:19:40,322.322] - [posthog.py:22 - __init__] - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG - [2025-03-12 21:19:40,611.611] - [config.py:332 - start] - Starting component System
+DEBUG - [2025-03-12 21:19:40,611.611] - [config.py:332 - start] - Starting component Posthog
+DEBUG - [2025-03-12 21:19:40,611.611] - [config.py:332 - start] - Starting component OpenTelemetryClient
+DEBUG - [2025-03-12 21:19:40,611.611] - [config.py:332 - start] - Starting component SqliteDB
+DEBUG - [2025-03-12 21:19:40,621.621] - [config.py:332 - start] - Starting component SimpleQuotaEnforcer
+DEBUG - [2025-03-12 21:19:40,621.621] - [config.py:332 - start] - Starting component SimpleRateLimitEnforcer
+DEBUG - [2025-03-12 21:19:40,621.621] - [config.py:332 - start] - Starting component LocalSegmentManager
+DEBUG - [2025-03-12 21:19:40,622.622] - [config.py:332 - start] - Starting component LocalExecutor
+DEBUG - [2025-03-12 21:19:40,622.622] - [config.py:332 - start] - Starting component SegmentAPI
+DEBUG - [2025-03-12 21:19:41,138.138] - [connectionpool.py:1049 - _new_conn] - Starting new HTTPS connection (1): us.i.posthog.com:443
+DEBUG - [2025-03-12 21:19:43,086.086] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-12 21:19:43,213.213] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-12 21:19:43,627.627] - [connectionpool.py:544 - _make_request] - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+DEBUG - [2025-03-12 21:19:48,740.740] - [segment.py:243 - create_collection] - Collection doc already exists, returning existing collection.
+DEBUG - [2025-03-12 21:19:49,532.532] - [connectionpool.py:544 - _make_request] - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+DEBUG - [2025-03-12 21:19:50,005.005] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-12 21:19:50,144.144] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-12 21:19:50,156.156] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-12 21:19:50,156.156] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-12 21:20:09,790.790] - [segment.py:243 - create_collection] - Collection doc already exists, returning existing collection.
+DEBUG - [2025-03-12 21:20:10,176.176] - [connectionpool.py:544 - _make_request] - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+DEBUG - [2025-03-12 21:37:39,304.304] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-12 21:37:39,494.494] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-12 21:37:39,494.494] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-12 21:37:39,494.494] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-12 21:41:10,961.961] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data1.txt
+DEBUG - [2025-03-12 21:41:10,963.963] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data2.txt
+DEBUG - [2025-03-12 21:41:10,964.964] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data3.txt
+DEBUG - [2025-03-12 21:41:10,965.965] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data4-copy.txt
+DEBUG - [2025-03-12 21:41:10,966.966] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data4.txt
+DEBUG - [2025-03-12 21:41:10,967.967] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data5-copy.txt
+DEBUG - [2025-03-12 21:41:10,968.968] - [directory.py:220 - _lazy_load_file] - Processing file: chroma\files\data5.txt

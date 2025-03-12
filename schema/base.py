@@ -1,7 +1,7 @@
 from pydantic import BaseModel 
 
-class BaseInputData(BaseModel):
+class BaseRequest(BaseModel):
     data: str
   
-class BaseOutputData(BaseModel):
+class BaseResponse(BaseModel):
     data: str

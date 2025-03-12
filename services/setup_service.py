@@ -16,10 +16,11 @@ class SetupService:
         try:
             client.models.list()
         except openai.AuthenticationError as e:
-            logger.error(e.message)
+            err = f"Could not validate OpenAI API key: {str(e)}"
+            logger.error(err)
             raise HTTPException(
-            status_code=200,
-            detail=e.message,
+            status_code=500,
+            detail=err,
         )   
  
     def create_dirs(): 

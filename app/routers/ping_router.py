@@ -1,20 +1,21 @@
 from fastapi import APIRouter, Request 
 from log import logger
 from fastapi import HTTPException 
-from data import BaseOutputData 
+from schema import BaseResponse 
 
 ping_router = APIRouter() 
  
-@ping_router.get(path="/ping", response_model=BaseOutputData)
+@ping_router.get(path="/ping", response_model=BaseResponse)
 async def ping(
     request: Request 
-) -> BaseOutputData:
+) -> BaseResponse:
     try:
         response = f"{request.app.title} - v.{request.app.version}" 
     except Exception as e: 
-            logger.error(e.message)
+            err = f"Request cannot be completed: {str(e)}"
+            logger.error(err)
             raise HTTPException(
             status_code=500,
-            detail=e.message,
+            detail=err,
         )  
-    return BaseOutputData(data=response) 
+    return BaseResponse(data=response) 
