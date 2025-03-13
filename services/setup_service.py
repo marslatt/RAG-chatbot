@@ -8,7 +8,7 @@ class SetupService:
     '''
     Service to setup and validate configuration or other data passed to the application. 
     '''   
-    def validate_api_key(): 
+    def validate_api_key(self): 
         '''
         Load and validate OpenAI API key in .env file   
         '''   
@@ -19,11 +19,11 @@ class SetupService:
             err = f"Could not validate OpenAI API key: {str(e)}"
             logger.error(err)
             raise HTTPException(
-            status_code=500,
+            status_code=400,
             detail=err,
         )   
  
-    def create_dirs(): 
+    def create_dirs(self): 
         '''
         Create 'chroma', 'files' and 'db' directories in non existant
         ''' 
@@ -38,4 +38,6 @@ class SetupService:
 
         if not os.path.exists(DB_DIR):
             os.makedirs(DB_DIR)
- 
+
+        msg = "Created 'chroma', 'files' and 'db' directories."
+        logger.info(msg)

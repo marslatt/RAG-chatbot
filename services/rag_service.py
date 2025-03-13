@@ -57,7 +57,7 @@ class RagService:
             )
       
 
-    async def add_docs(self) -> list[str]:
+    async def add_docs(self) -> str:
         '''
         Load, split and add .txt documents to Chroma.
         ''' 
@@ -88,7 +88,7 @@ class RagService:
             status_code=500,
             detail=err,
         )             
-        return doc_ids
+        return "doc_ids: " + "|".join(doc_ids)
 
     def get_retriever(self) -> VectorStoreRetriever:
         # return db.as_retriever(search_type="similarity", search_kwargs={"k": 3})

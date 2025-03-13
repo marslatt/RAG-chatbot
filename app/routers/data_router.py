@@ -9,11 +9,11 @@ from fastapi import File, UploadFile
 
 data_router = APIRouter() 
  
-# TODO injecting global dependency for RagService as such is already configured during app init
+# TODO 
 @data_router.get("/data", response_model=BaseDataResponse)
 async def add_data( 
     request: Request, # BaseDataRequest,
-    rag_service: RagService = Depends(service_provider.RagService),
+    rag_service: RagService = Depends(service_provider.rag_service),
     ) -> BaseDataResponse:
     try:
         response = await rag_service.add_docs() 

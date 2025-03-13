@@ -7,7 +7,7 @@ from services import service_provider
 from app import app
 
 def main_setup():
-    setup_service = service_provider.SetupService
+    setup_service = service_provider.setup_service()
     setup_service.create_dirs()
     setup_service.validate_api_key()
     logger.info("OPENAI API key validated.") 
