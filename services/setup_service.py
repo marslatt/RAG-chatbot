@@ -6,7 +6,7 @@ from config.constants import OPENAI_API_KEY, CHROMA_DIR, FILES_DIR, DB_DIR
 
 class SetupService:
     '''
-    Service to setup and validate configuration or other data passed to the application. 
+    Service to setup and validate configuration or other data. 
     '''   
     def validate_api_key(self): 
         '''

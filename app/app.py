@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException 
 from services.service_provider import service_provider, LlmService, RagService
 from log import logger
+from fastapi.staticfiles import StaticFiles
 
 # https://fastapi.tiangolo.com/tutorial/bigger-applications
 # https://fastapi.tiangolo.com/tutorial/dependencies
@@ -36,6 +37,8 @@ def create_app() -> FastAPI:
         version="0.0.1",
         lifespan=lifespan,
     ) 
+
+    app.mount("/css", StaticFiles(directory="templates/css"), name="css")
 
     app.include_router(router=ping_router) 
     app.include_router(router=data_router)

@@ -1,3 +1,6 @@
+# routes to /chat
+
+
 '''
    def init_chatbot(self):
         """
