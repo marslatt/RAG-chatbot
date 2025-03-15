@@ -1,9 +1,9 @@
-from app.routers import ping_router, data_router
+from app.routers import ping_router, rag_router
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException 
 from services.service_provider import service_provider, LlmService, RagService
 from log import logger
-from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles 
 
 # https://fastapi.tiangolo.com/tutorial/bigger-applications
 # https://fastapi.tiangolo.com/tutorial/dependencies
@@ -39,9 +39,13 @@ def create_app() -> FastAPI:
     ) 
 
     app.mount("/css", StaticFiles(directory="templates/css"), name="css")
-
     app.include_router(router=ping_router) 
-    app.include_router(router=data_router)
+    app.include_router(router=rag_router)
     return app
 
 app = create_app()    
+
+
+# TODO Exception handlers
+# https://fastapi.tiangolo.com/tutorial/handling-errors/#override-request-validation-exceptions
+# https://github.com/fastapi/fastapi/issues/3182

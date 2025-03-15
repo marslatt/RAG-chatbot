@@ -1,29 +1,50 @@
-INFO - [2025-03-14 11:58:23,892.892] - [main.py:29 - start_uvicorn] - Starting Uvicorn...
-DEBUG - [2025-03-14 11:58:23,894.894] - [proactor_events.py:625 - __init__] - Using proactor: IocpProactor
-DEBUG - [2025-03-14 11:58:23,943.943] - [_trace.py:47 - trace] - close.started
-DEBUG - [2025-03-14 11:58:23,943.943] - [_trace.py:47 - trace] - close.complete
-DEBUG - [2025-03-14 11:58:23,997.997] - [retry.py:286 - from_int] - Converted retries value: 2 -> Retry(total=2, connect=None, read=None, redirect=None, status=None)
-INFO - [2025-03-14 11:58:24,004.004] - [posthog.py:22 - __init__] - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
-DEBUG - [2025-03-14 11:58:24,168.168] - [config.py:332 - start] - Starting component System
-DEBUG - [2025-03-14 11:58:24,168.168] - [config.py:332 - start] - Starting component Posthog
-DEBUG - [2025-03-14 11:58:24,168.168] - [config.py:332 - start] - Starting component OpenTelemetryClient
-DEBUG - [2025-03-14 11:58:24,168.168] - [config.py:332 - start] - Starting component SqliteDB
-DEBUG - [2025-03-14 11:58:24,188.188] - [config.py:332 - start] - Starting component SimpleQuotaEnforcer
-DEBUG - [2025-03-14 11:58:24,188.188] - [config.py:332 - start] - Starting component SimpleRateLimitEnforcer
-DEBUG - [2025-03-14 11:58:24,188.188] - [config.py:332 - start] - Starting component LocalSegmentManager
-DEBUG - [2025-03-14 11:58:24,189.189] - [config.py:332 - start] - Starting component LocalExecutor
-DEBUG - [2025-03-14 11:58:24,189.189] - [config.py:332 - start] - Starting component SegmentAPI
-DEBUG - [2025-03-14 11:58:24,197.197] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
-DEBUG - [2025-03-14 11:58:24,198.198] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='C:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
-DEBUG - [2025-03-14 11:58:24,207.207] - [segment.py:243 - create_collection] - Collection doc already exists, returning existing collection.
-DEBUG - [2025-03-14 11:58:24,214.214] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
-DEBUG - [2025-03-14 11:58:24,214.214] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='C:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
-DEBUG - [2025-03-14 11:58:24,222.222] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
-DEBUG - [2025-03-14 11:58:24,223.223] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='C:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
-DEBUG - [2025-03-14 11:58:24,232.232] - [segment.py:243 - create_collection] - Collection doc already exists, returning existing collection.
-DEBUG - [2025-03-14 11:58:24,239.239] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
-DEBUG - [2025-03-14 11:58:24,240.240] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='C:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
-DEBUG - [2025-03-14 11:58:24,248.248] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
-DEBUG - [2025-03-14 11:58:24,249.249] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='C:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
-DEBUG - [2025-03-14 11:58:24,692.692] - [connectionpool.py:1049 - _new_conn] - Starting new HTTPS connection (1): us.i.posthog.com:443
-DEBUG - [2025-03-14 11:58:25,107.107] - [connectionpool.py:544 - _make_request] - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+INFO - [2025-03-15 23:27:03,285.285] - [main.py:29 - start_uvicorn] - Starting Uvicorn...
+DEBUG - [2025-03-15 23:27:03,289.289] - [proactor_events.py:625 - __init__] - Using proactor: IocpProactor
+DEBUG - [2025-03-15 23:27:03,359.359] - [retry.py:286 - from_int] - Converted retries value: 2 -> Retry(total=2, connect=None, read=None, redirect=None, status=None)
+INFO - [2025-03-15 23:27:03,371.371] - [posthog.py:22 - __init__] - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component System
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component Posthog
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component OpenTelemetryClient
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component SqliteDB
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component SimpleQuotaEnforcer
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component SimpleRateLimitEnforcer
+DEBUG - [2025-03-15 23:27:03,639.639] - [config.py:332 - start] - Starting component LocalSegmentManager
+DEBUG - [2025-03-15 23:27:03,653.653] - [config.py:332 - start] - Starting component LocalExecutor
+DEBUG - [2025-03-15 23:27:03,653.653] - [config.py:332 - start] - Starting component SegmentAPI
+DEBUG - [2025-03-15 23:27:03,661.661] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-15 23:27:03,666.666] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-15 23:27:03,677.677] - [segment.py:243 - create_collection] - Collection doc already exists, returning existing collection.
+DEBUG - [2025-03-15 23:27:03,686.686] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-15 23:27:03,687.687] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-15 23:27:03,695.695] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-15 23:27:03,696.696] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-15 23:27:03,707.707] - [segment.py:243 - create_collection] - Collection doc already exists, returning existing collection.
+DEBUG - [2025-03-15 23:27:03,717.717] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-15 23:27:03,717.717] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-15 23:27:03,727.727] - [_config.py:82 - load_ssl_context] - load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG - [2025-03-15 23:27:03,728.728] - [_config.py:148 - load_ssl_context_verify] - load_verify_locations cafile='c:\\Users\\marin\\.virtualenvs\\RAG-chatbot-ogCzX7vf\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG - [2025-03-15 23:27:04,188.188] - [connectionpool.py:1049 - _new_conn] - Starting new HTTPS connection (1): us.i.posthog.com:443
+DEBUG - [2025-03-15 23:27:04,263.263] - [_trace.py:47 - trace] - close.started
+DEBUG - [2025-03-15 23:27:04,263.263] - [_trace.py:47 - trace] - close.complete
+DEBUG - [2025-03-15 23:27:04,702.702] - [connectionpool.py:544 - _make_request] - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+DEBUG - [2025-03-15 23:27:57,385.385] - [multipart.py:628 - callback] - Calling on_part_begin with no data
+DEBUG - [2025-03-15 23:27:57,386.386] - [multipart.py:625 - callback] - Calling on_header_field with data[42:61]
+DEBUG - [2025-03-15 23:27:57,386.386] - [multipart.py:625 - callback] - Calling on_header_value with data[63:126]
+DEBUG - [2025-03-15 23:27:57,387.387] - [multipart.py:628 - callback] - Calling on_header_end with no data
+DEBUG - [2025-03-15 23:27:57,387.387] - [multipart.py:625 - callback] - Calling on_header_field with data[128:140]
+DEBUG - [2025-03-15 23:27:57,388.388] - [multipart.py:625 - callback] - Calling on_header_value with data[142:152]
+DEBUG - [2025-03-15 23:27:57,388.388] - [multipart.py:628 - callback] - Calling on_header_end with no data
+DEBUG - [2025-03-15 23:27:57,388.388] - [multipart.py:628 - callback] - Calling on_headers_finished with no data
+DEBUG - [2025-03-15 23:27:57,389.389] - [multipart.py:625 - callback] - Calling on_part_data with data[156:2585]
+DEBUG - [2025-03-15 23:27:57,389.389] - [multipart.py:628 - callback] - Calling on_part_end with no data
+DEBUG - [2025-03-15 23:27:57,389.389] - [multipart.py:628 - callback] - Calling on_part_begin with no data
+DEBUG - [2025-03-15 23:27:57,389.389] - [multipart.py:625 - callback] - Calling on_header_field with data[2629:2648]
+DEBUG - [2025-03-15 23:27:57,390.390] - [multipart.py:625 - callback] - Calling on_header_value with data[2650:2706]
+DEBUG - [2025-03-15 23:27:57,390.390] - [multipart.py:628 - callback] - Calling on_header_end with no data
+DEBUG - [2025-03-15 23:27:57,390.390] - [multipart.py:625 - callback] - Calling on_header_field with data[2708:2720]
+DEBUG - [2025-03-15 23:27:57,391.391] - [multipart.py:625 - callback] - Calling on_header_value with data[2722:2732]
+DEBUG - [2025-03-15 23:27:57,391.391] - [multipart.py:628 - callback] - Calling on_header_end with no data
+DEBUG - [2025-03-15 23:27:57,391.391] - [multipart.py:628 - callback] - Calling on_headers_finished with no data
+DEBUG - [2025-03-15 23:27:57,391.391] - [multipart.py:625 - callback] - Calling on_part_data with data[2736:5165]
+DEBUG - [2025-03-15 23:27:57,392.392] - [multipart.py:628 - callback] - Calling on_part_end with no data
+DEBUG - [2025-03-15 23:27:57,392.392] - [multipart.py:628 - callback] - Calling on_end with no data

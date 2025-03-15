@@ -8,39 +8,67 @@
 </head>
 <body>
     <div class="container">	 
-        <h2>File Upload</h2>		      
+        <h2>Upload files to RAG database</h2>		      
         <ul id="fileList">
             <!-- Uploaded files will appear here -->
         </ul>
-        <input type="file" id="fileInput" multiple><br>
-        <button id="submitBtn">Upload Files</button> 
+        <form id="mainForm" method="POST" enctype="multipart/form-data">
+            <input type="file" id="fileInput" multiple><br>
+            <button id="submitBtn" type="submit">Upload Files</button> 
+        </form>
     </div>
 
-    <script>
-        // Get elements
+    <script> 
         const fileInput = document.getElementById('fileInput');
-        const submitBtn = document.getElementById('submitBtn');
-        const fileList = document.getElementById('fileList');
+        const mainForm = document.getElementById("mainForm");
+        const fileList = document.getElementById("fileList");
+        
+        mainForm.addEventListener("submit", async function(event) {     
+            // Prevent the default form submission       
+            event.preventDefault();  
 
-        // Function to add file name to list
-        function addFile(fileName) {
-            const fileItem = document.createElement('li');
-            fileItem.textContent = fileName;
-            fileList.appendChild(fileItem);
-            fileList.scrollTop = fileList.scrollHeight;  // Scroll to the latest file
-        }
-
-        // Handle button click for file upload
-        submitBtn.addEventListener('click', function() {
-            const files = fileInput.files;
-            if (files.length > 0) {
-                for (let i = 0; i < files.length; i++) {
-                    const fileName = files[i].name;
-                    addFile(fileName);  // Add the file name to the list
-                }
-                fileInput.value = '';  // Clear file input
-            } else {
+            // Get the files from the file input 
+            const files = fileInput.files;             
+            if (files.length === 0) { 
                 alert("Please select files to upload.");
+                return;
+            }
+            
+            // Prepare the FormData object to send the files
+            const formData = new FormData(); 
+            for (let i = 0; i < files.length; i++) {
+                formData.append("file" + i, files[i]);
+            }
+
+            try {
+                // Send the FormData to the server using fetch
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData, // Send the files in the request body
+                });
+
+                // Handle the response from the server
+                if (response.ok) {
+                    // Collect JSON sent by the server
+                    const data = await response.json();  
+                    console.log("Upload successful:", data);
+                
+                 // Display the uploaded files                  
+                Array.from(files).forEach(file => {
+                    const li = document.createElement("li");
+                    li.textContent = file.name;
+                    fileList.appendChild(li);
+                    // Scroll to the latest file
+                    fileList.scrollTop = fileList.scrollHeight;  
+                });   
+                
+                // Clear file input    
+                fileInput.value = '';
+                } else {
+                    console.error("Error during file upload:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error during fetch:", error);            
             }
         });
     </script>

@@ -6,6 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.vectorstores.base import VectorStoreRetriever
 from config.constants import OPENAI_API_KEY, OPENAI_LLM
 
+# https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/
 # https://python.langchain.com/docs/concepts/async/
 
 class LlmService:  
@@ -15,9 +16,7 @@ class LlmService:
     def __init__(self):
         self.llm = None
         self.chain = None
-        self.chat_history = []
-
-    # TODO Move chain and history to ./chains/history_chain.py    
+        self.chat_history = []   
 
     def _create_chain(self, retriever: VectorStoreRetriever):
         '''
