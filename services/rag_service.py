@@ -38,9 +38,9 @@ class RagService:
             err = f"Error occured while creating or loading collection: {str(e)}"
             logger.error(err)
             raise HTTPException(
-            status_code=500,
-            detail=err,
-        )  
+                status_code=500,
+                detail=err,
+            )  
  
         embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         self.db = Chroma(
@@ -53,8 +53,8 @@ class RagService:
             err = "Chroma DB is not initialized properly!"
             logger.error(err)
             raise HTTPException(
-            status_code=500,
-            detail=err,
+                status_code=500,
+                detail=err,
             )
       
     async def add_docs(self) -> str:
@@ -85,9 +85,9 @@ class RagService:
             err =  f"Error occured while adding documents to database: {str(e)}"
             logger.error(err)
             raise HTTPException(
-            status_code=500,
-            detail=err,
-        )    
+                status_code=500,
+                detail=err,
+            )    
         finally:
             # Clean up
             for f in os.listdir(FILES_DIR): 

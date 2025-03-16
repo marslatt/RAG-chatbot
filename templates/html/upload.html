@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload Page</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="container">	 
-        <h2>Upload files to RAG database</h2>		      
+        <h2>Upload files to RAG database</h2>	      
         <ul id="fileList">
             <!-- Uploaded files will appear here -->
         </ul>
         <form id="mainForm" method="POST" enctype="multipart/form-data">
             <input type="file" id="fileInput" multiple><br>
-            <button id="submitBtn" type="submit">Upload Files</button> 
+            <button id="submitBtn" type="submit">Upload Files</button>             
+            <p id="uploadMsg">Only .txt files in English are currently accepted.</p>	
         </form>
     </div>
 
     <script> 
-        //TODO show only txt files for fileInput
-
         const fileInput = document.getElementById('fileInput');
         const mainForm = document.getElementById("mainForm");
         const fileList = document.getElementById("fileList");
@@ -50,28 +49,32 @@
                 });
 
                 // Handle the response from the server
-                if (response.ok) {
+                if (response.ok) {   
                     // Collect JSON sent by the server
-                    const data = await response.json();  
-                    console.log("Upload successful:", data);
-                
-                 // Display the uploaded files                  
-                Array.from(files).forEach(file => {
-                    const li = document.createElement("li");
-                    li.textContent = file.name;
-                    fileList.appendChild(li);
-                    // Scroll to the latest file
-                    fileList.scrollTop = fileList.scrollHeight;  
-                });   
-                
-                // Clear file input    
-                fileInput.value = '';
+                    const json = await response.json();                   
+                    console.log("Upload successful:", json);
+
+                    // Display the uploaded files                  
+                    Array.from(files).forEach(file => {
+                        const li = document.createElement("li");
+                        li.textContent = file.name;
+                        fileList.appendChild(li);
+                        // Scroll to the latest file
+                        fileList.scrollTop = fileList.scrollHeight;  
+                        }); 
+                    
+                    // Clear file input    
+                    fileInput.value = '';
                 } else {
-                    console.error("Error during file upload:", response.statusText);
+                    message = "Error occured while uploading document!";
+                    console.error(message, response.statusText); 
+                    alert(message);                 
                 }
-            } catch (error) {
-                console.error("Error during fetch:", error);            
-            }
+            } catch (error) { 
+                message = "Error occured while uploading document!";
+                console.error(message, error); 
+                alert(message);            
+            } 
         });
     </script>
 </body>

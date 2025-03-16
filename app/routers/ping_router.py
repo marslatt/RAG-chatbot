@@ -3,10 +3,8 @@ from log import logger
 from fastapi import HTTPException 
 # from schema import BaseResponse 
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from datetime import datetime 
-
-templates = Jinja2Templates(directory="templates")
+from templates import templates
+from datetime import datetime  
 
 ping_router = APIRouter() 
  
@@ -19,12 +17,12 @@ async def ping(
         version = request.app.version 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     except Exception as e: 
-        err = f"Request cannot be completed: {str(e)}"
-        logger.error(err)
+        err = str(e)
+        logger.error(f"Error occured while uploading document: {err}")
         raise HTTPException(
-        status_code=500,
-        detail=err,
-    )      
+            status_code=500,
+            detail=err,
+        ) 
     return templates.TemplateResponse(
         request=request, 
         name="ping.html", 

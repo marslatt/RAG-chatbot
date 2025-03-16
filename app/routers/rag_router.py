@@ -2,16 +2,13 @@ from fastapi import Depends
 from fastapi.routing import APIRouter, Request
 from log.logger import logger
 from services import service_provider 
-from services.rag_service import RagService
-from fastapi import HTTPException 
+from services.rag_service import RagService 
 from fastapi.responses import JSONResponse
 from starlette.datastructures import UploadFile
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates  
+from fastapi.responses import HTMLResponse 
 from config.constants import FILES_DIR
+from templates import templates
 import os
-
-templates = Jinja2Templates(directory="templates")
 
 rag_router = APIRouter()  
   
@@ -25,11 +22,10 @@ async def upload(
     )  
 
 @rag_router.post("/process") 
-# def process(files: list[UploadFile]):
 async def process(
     request: Request,
     rag_service: RagService = Depends(service_provider.rag_service),
-    ):
+    ) -> JSONResponse:
     try:
         form = await request.form() 
         for field in form:
@@ -43,9 +39,7 @@ async def process(
     except Exception as e:
         err = str(e)
         logger.error(f"Error occured while uploading document: {err}")
-        raise HTTPException(
-        status_code=500,
-        detail=err,
-        ) 
+        return JSONResponse(status_code=500, content={"error": err})  
+    
     return JSONResponse(status_code=200, content={"success": doc_ids}) 
      

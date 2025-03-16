@@ -19,9 +19,9 @@ class SetupService:
             err = f"Could not validate OpenAI API key: {str(e)}"
             logger.error(err)
             raise HTTPException(
-            status_code=400,
-            detail=err,
-        )   
+                status_code=400,
+                detail=err,
+            )   
  
     def create_dirs(self): 
         '''

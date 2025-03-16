@@ -82,8 +82,16 @@ h2 {
     font-size: 14px;
 }
 
-#pingTxt {
+#pingMsg, #errMsg {
     display: block;
     width: 94%;
-    padding: 3% 0; 
+    padding: 3% 0;  
+}
+ 
+#errMsg {
+    color: #9b0c0c; 
+}
+
+#uploadMsg {
+    font-size: 12px;
 }
