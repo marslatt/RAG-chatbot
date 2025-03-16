@@ -1,7 +1,0 @@
-In the high stakes work of bomb squads, success hinges on assessing a threat quickly, while keeping officers and people out of harm’s way. For the Montgomery County, Pennsylvania Sheriff’s bomb squad, using robots is a standard practice. However, when officers learned that Boston Dynamics' agile robot, Spot, could trek up and down steps, open doors, and navigate tight spaces, they recognized a robot with a revolutionary skill set. They purchased Spot in the spring of 2024.
-
-"What attracted us to Spot was its mobility and its nimbleness," said Lieutenant Allen Stewart, who leads the seven-member bomb squad. "Once we saw Spot's ability to get into doors and get up steps, we thought, 'This thing is amazing.'"
-
-Spot joins two types of ground-based robots the bomb squad continues to utilize, the Andros F6A and the iRobot 110 FirstLook. These robots are most effective on flat surfaces, but struggle on uneven ground and are painstakingly slow going up steps. In fact, on one occasion while assisting a SWAT team, the bomb squad had to carry a 500 pound F6A robot up a flight of stairs because the steps were too steep. Spot, on the other hand, would have ascended the same flight of stairs in seconds, giving the team a superior tactical advantage.
-
-"I would say it will take a good 20 minutes for the other robot systems to get up a normal flight of steps in a house," said Stewart. "Spot is up there within a few seconds."

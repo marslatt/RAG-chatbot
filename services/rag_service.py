@@ -9,6 +9,7 @@ from langchain.vectorstores.base import VectorStoreRetriever
 from langchain_openai import OpenAIEmbeddings
 from log import logger
 from fastapi import HTTPException 
+import os
 
 # https://medium.com/the-modern-scientist/building-generative-ai-applications-using-langchain-and-openai-apis-ee3212400630
 
@@ -27,7 +28,7 @@ class RagService:
         client = PersistentClient(path=DB_DIR) 
 
         try: 
-            # Create or load collection if exists.
+            # Create or load collection if exists
             embedding_func = OpenAIEmbeddingFunction(api_key=OPENAI_API_KEY)
             collection = client.get_or_create_collection(
                 name=clname,
@@ -56,28 +57,27 @@ class RagService:
             detail=err,
             )
       
-
     async def add_docs(self) -> str:
         '''
         Load, split and add .txt documents to Chroma.
         ''' 
-        # Load list of .txt documents.
-        loader = DirectoryLoader(
-            FILES_DIR,
-            glob='**/*.txt',
-            loader_cls=TextLoader
-        )
-        raw_documents = await loader.aload()
+        try:
+            # Load list of .txt documents
+            loader = DirectoryLoader(
+                FILES_DIR,
+                glob='**/*.txt',
+                loader_cls=TextLoader
+            )
+            raw_documents = await loader.aload()
+    
+            # Split documents into chunks
+            text_splitter = CharacterTextSplitter(
+                separator=".",  # split on a full-stop
+                chunk_size=1000,
+                chunk_overlap=50  # overlap to avoid loss of information
+            )
 
-        # Split documents into chunks.
-        text_splitter = CharacterTextSplitter(
-            separator=".",  # split on a full-stop
-            chunk_size=1000,
-            chunk_overlap=50  # overlap to avoid loss of information
-        )
-
-        # Add documents to database.
-        try: 
+            # Add documents to database            
             docs = await text_splitter.atransform_documents(raw_documents) 
             # TODO add only unique_docs
             doc_ids = await self.db.aadd_documents(docs)
@@ -87,7 +87,14 @@ class RagService:
             raise HTTPException(
             status_code=500,
             detail=err,
-        )             
+        )    
+        finally:
+            # Clean up
+            for f in os.listdir(FILES_DIR): 
+                file = os.path.join(FILES_DIR, f)
+                if os.path.exists(file):
+                    os.remove(file)  
+
         return "doc_ids: " + "|".join(doc_ids)
 
     def get_retriever(self) -> VectorStoreRetriever:

@@ -31,17 +31,15 @@ async def process(
     rag_service: RagService = Depends(service_provider.rag_service),
     ):
     try:
-        form = await request.form()
-        fnames = [] 
+        form = await request.form() 
         for field in form:
             elem = form[field]
             if isinstance(elem, UploadFile):
                 filename = os.path.join(FILES_DIR, elem.filename)  
                 content = elem.file.read() 
                 with open(filename, 'wb') as f:
-                    f.write(content)
-                fnames.append(filename)  
-        # TODO #doc_id = await rag_service.add_docs(fnames)            
+                    f.write(content)   
+        doc_ids = await rag_service.add_docs()            
     except Exception as e:
         err = str(e)
         logger.error(f"Error occured while uploading document: {err}")
@@ -49,5 +47,5 @@ async def process(
         status_code=500,
         detail=err,
         ) 
-    return JSONResponse(status_code=200, content={"success": fnames}) 
+    return JSONResponse(status_code=200, content={"success": doc_ids}) 
      

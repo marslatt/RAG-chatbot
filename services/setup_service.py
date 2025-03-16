@@ -39,5 +39,24 @@ class SetupService:
         if not os.path.exists(DB_DIR):
             os.makedirs(DB_DIR)
 
-        msg = "Created 'chroma', 'files' and 'db' directories."
-        logger.info(msg)
+        logger.info("Created 'chroma', 'files' and 'db' directories.")
+
+    def delete_dirs(self):
+        '''
+        Delete 'chroma', 'files' and 'db' directories if existant
+        ''' 
+        for f in os.listdir(FILES_DIR): 
+            file = os.path.join(FILES_DIR, f)
+            if os.path.exists(file):
+                os.remove(file)  
+
+        for f in os.listdir(DB_DIR): 
+            file = os.path.join(DB_DIR, f)
+            if os.path.exists(file):
+                os.remove(file) 
+
+        os.rmdir(FILES_DIR)    
+        os.rmdir(DB_DIR)    
+        os.rmdir(CHROMA_DIR)         
+ 
+        logger.info("Deleted 'chroma', 'files' and 'db' directories.")
