@@ -4,27 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot Page</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h2>RAG Chatbot</h2>
-        <ul id="conversation">
-            <!-- Conversation history will appear here -->
+    <div class="container">        
+        <div class="header">
+            <h2>Simple RAG Chatbot</h2>        
+            <a href="/upload" class="nav-link">            
+                Upload files <i class="fas fa-arrow-right"></i>
+            </a>	  
+        </div>        
+        <ul id="conversation"> 
+        {% for item in history %}
+            {% set key = item.keys() | first %}
+            <li class="{{ 'aiMsg' if key == 'ai' else 'userMsg' }}">
+                {{ 'AI' if key == 'ai' else 'You' }}: {{ item.values() | first }}
+            </li>
+        {% endfor %}
         </ul>
         <textarea id="inputArea" placeholder="Type your message..."></textarea><br>
-        <button id="submitBtn">Send</button>
-    </div>      
+        <button id="submitBtn">Send</button>  
+    </div>   
     
     <script>
+        // TODO
+
         // Get elements
         const inputArea = document.getElementById('inputArea');
         const submitBtn = document.getElementById('submitBtn');
         const conversation = document.getElementById('conversation');
 
         // Function to add message to conversation
-        function addMessage(message) {
+        function addMessage(message, name) {
             const messageItem = document.createElement('li');
+            messageItem.className = (name == "ai") ? "aiMsg" : "userMsg";
             messageItem.textContent = message;
             conversation.appendChild(messageItem);
             conversation.scrollTop = conversation.scrollHeight;  // Scroll to the latest message
@@ -34,12 +48,12 @@
         submitBtn.addEventListener('click', function() {
             const message = inputArea.value.trim();
             if (message) {
-                addMessage('You: ' + message);  // Add user message
+                addMessage('You: ' + message, "user");  // Add user message
                 inputArea.value = '';  // Clear input area
                 inputArea.focus();
                 // Simulate a response (for demonstration)
                 setTimeout(() => {
-                    addMessage('Bot: This is a bot reply!');  // Add bot response
+                    addMessage('Bot: This is a bot reply!', "ai");  // Add bot response
                 }, 1000);
             }
         });

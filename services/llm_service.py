@@ -51,7 +51,10 @@ class LlmService:
         )
         self.chain = self._create_chain(retriever)
 
-    def generate_response(self, user_input):
+    def get_history(self) -> list: 
+        return self.chat_history 
+
+    async def generate_response(self, user_input):
         '''
         Generate response based on previous chat history and user input.
         '''
@@ -69,7 +72,7 @@ class LlmService:
         '''
 
         answer = response['answer']
-        self.chat_history.append("user", f"{user_input}")
-        self.chat_history.append("ai", f"{answer}")
+        self.chat_history.append({"user" : f"{user_input}"})
+        self.chat_history.append({"ai" : f"{answer}"})
         return answer    
       

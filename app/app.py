@@ -15,7 +15,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 # https://fastapi.tiangolo.com/tutorial/handling-errors/#override-request-validation-exceptions
 '''
 
-from app.routers import ping_router, rag_router
+from app.routers import ping_router, rag_router, chat_router
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException, Request 
 from services.service_provider import service_provider
@@ -64,6 +64,7 @@ def create_app() -> FastAPI:
     app.mount("/css", StaticFiles(directory="templates/css"), name="css")
     app.include_router(router=ping_router) 
     app.include_router(router=rag_router)
+    app.include_router(router=chat_router)
     return app
 
 app = create_app() 
@@ -81,4 +82,7 @@ async def http_exception_handler(
             name="error.html", 
             context={"message": str(e)} 
         )     
- 
+
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/chat")
