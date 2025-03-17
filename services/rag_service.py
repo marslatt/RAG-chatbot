@@ -38,7 +38,7 @@ class RagService:
             err = f"Error occured while creating or loading collection: {str(e)}"
             logger.error(err)
             raise HTTPException(
-                status_code=500,
+                status_code=500, # 500 Internal Server Error
                 detail=err,
             )  
  
@@ -53,7 +53,7 @@ class RagService:
             err = "Chroma DB is not initialized properly!"
             logger.error(err)
             raise HTTPException(
-                status_code=500,
+                status_code=500, # 500 Internal Server Error
                 detail=err,
             )
       
@@ -85,7 +85,7 @@ class RagService:
             err =  f"Error occured while adding documents to database: {str(e)}"
             logger.error(err)
             raise HTTPException(
-                status_code=500,
+                status_code=500, # 500 Internal Server Error
                 detail=err,
             )    
         finally:

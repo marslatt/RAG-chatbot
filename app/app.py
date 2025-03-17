@@ -28,6 +28,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 # https://fastapi.tiangolo.com/tutorial/bigger-applications
 # https://fastapi.tiangolo.com/tutorial/dependencies
 # https://fastapi.tiangolo.com/advanced/events/
+# https://stackoverflow.com/questions/77041522/fastapi-lifespan-event-in-docker-container-running-not-executing-the-shutdown
 
 # Executed once at startup, before the application starts receiving requests. Useful for setting up resources 
 # that are neccessary for the entire app, and that are shared among requests.
@@ -43,13 +44,14 @@ async def lifespan(app: FastAPI):
         err = f"Error occured while creating FastAPI app: {str(e)}"
         logger.error(err)
         raise HTTPException(
-            status_code=500,
+            status_code=500, # 500 Internal Server Error
             detail=err,
         )
     yield
     # Clean up and release the resources.  
     setup_service = service_provider.setup_service()
     setup_service.delete_dirs()
+    logger.info("Finished cleaning all allocated resources. Application in shutting down...")
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -70,10 +72,13 @@ app = create_app()
 async def http_exception_handler(
     request: Request,
     e: Exception,
-    )-> HTMLResponse:  
+    )-> HTMLResponse:
+    err = f"{str(request.url)} - {str(e)}"
+    logger.error(err)  
     return templates.TemplateResponse(
             request=request, 
-            status_code=500,
+            status_code=404, # 404 Not Found
             name="error.html", 
             context={"message": str(e)} 
         )     
+ 

@@ -13,14 +13,14 @@ async def ping(
     request: Request 
 ) -> HTMLResponse:
     try:
-        title = request.app.title
+        title = request.app.rtitle
         version = request.app.version 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     except Exception as e: 
-        err = str(e)
-        logger.error(f"Error occured while uploading document: {err}")
+        err = f"Error occured while generating ping message: {str(e)}"
+        logger.error(err)
         raise HTTPException(
-            status_code=500,
+            status_code=404, # 404 Not Found
             detail=err,
         ) 
     return templates.TemplateResponse(

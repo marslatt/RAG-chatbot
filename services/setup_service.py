@@ -19,7 +19,7 @@ class SetupService:
             err = f"Could not validate OpenAI API key: {str(e)}"
             logger.error(err)
             raise HTTPException(
-                status_code=400,
+                status_code=500, # 500 Internal Server Error
                 detail=err,
             )   
  
