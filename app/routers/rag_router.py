@@ -36,12 +36,11 @@ async def process(
                 with open(filename, 'wb') as f:
                     f.write(content)   
                 logger.info(f"{filename} uploaded successfully.")    
-        doc_ids = await rag_service.add_docs()  
-        logger.info(f"{filename} added to Chroma db successfully.")            
+        await rag_service.add_docs()             
     except Exception as e:
-        err = f"Error occured while uploading document: {str(e)}"
+        err = f"Error occured while uploading documents: {str(e)}"
         logger.error(err)
         return JSONResponse(status_code=422, content={"error": err})  # 422 Unprocessable Content
-    
-    return JSONResponse(status_code=200, content={"success": doc_ids}) 
+ 
+    return JSONResponse(status_code=200, content={"success": "Documents uploaded successfully."}) 
      

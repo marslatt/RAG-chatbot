@@ -48,10 +48,10 @@ async def lifespan(app: FastAPI):
             detail=err,
         )
     yield
-    # Clean up and release the resources.  
+    # Clean up and release allocated resources.  # TODO
     setup_service = service_provider.setup_service()
     setup_service.delete_dirs()
-    logger.info("Finished cleaning all allocated resources. Application in shutting down...")
+    logger.info("Finished clean up of allocated resources. Application is shutting down...")
 
 def create_app() -> FastAPI:
     app = FastAPI(

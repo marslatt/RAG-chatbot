@@ -13,7 +13,7 @@ async def ping(
     request: Request 
 ) -> HTMLResponse:
     try:
-        title = request.app.rtitle
+        title = request.app.title
         version = request.app.version 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     except Exception as e: 

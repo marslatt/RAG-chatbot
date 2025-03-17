@@ -57,7 +57,7 @@ class RagService:
                 detail=err,
             )
       
-    async def add_docs(self) -> str:
+    async def add_docs(self):
         '''
         Load, split and add .txt documents to Chroma.
         ''' 
@@ -69,18 +69,23 @@ class RagService:
                 loader_cls=TextLoader
             )
             raw_documents = await loader.aload()
-    
-            # Split documents into chunks
+            logger.info(f"{len(raw_documents)} documents loaded by DirectoryLoader.")
+
             text_splitter = CharacterTextSplitter(
                 separator=".",  # split on a full-stop
                 chunk_size=1000,
                 chunk_overlap=50  # overlap to avoid loss of information
             )
+                
+            # Takes in a list of documents and splits each document into smaller chunks based on a specified size. 
+            # Returns a list of text chunks, each of which is a substring of the original document.           
+            chunks = await text_splitter.atransform_documents(raw_documents)  
+            logger.info(f"{len(chunks)} chunks created by CharacterTextSplitter.")
 
-            # Add documents to database            
-            docs = await text_splitter.atransform_documents(raw_documents) 
-            # TODO add only unique_docs
-            doc_ids = await self.db.aadd_documents(docs)
+            # Creates embeddings (mappings) for a collection of documents to be stored in the Chroma database. 
+            # Stores embeddings as vectors (and optionally their metadata), allowing for efficient vector searches.
+            v_ids = await self.db.aadd_documents(chunks)
+            logger.info(f"{len(v_ids)} vectors added successfully to Chroma DB.")
         except Exception as e:
             err =  f"Error occured while adding documents to database: {str(e)}"
             logger.error(err)
@@ -95,11 +100,9 @@ class RagService:
                 if os.path.exists(file):
                     os.remove(file)  
 
-        return "doc_ids: " + "|".join(doc_ids)
-
-    def get_retriever(self) -> VectorStoreRetriever:
-        # return db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-        return self.db.as_retriever()
+    def get_retriever(self) -> VectorStoreRetriever: 
+        return self.db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+        # return self.db.as_retriever()
 
     # TODO
     def delete_docs(self): 

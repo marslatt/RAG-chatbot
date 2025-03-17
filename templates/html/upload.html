@@ -13,7 +13,7 @@
             <!-- Uploaded files will appear here -->
         </ul>
         <form id="mainForm" method="POST" enctype="multipart/form-data">
-            <input type="file" id="fileInput" multiple><br>
+            <input type="file" id="fileInput"><br>
             <button id="submitBtn" type="submit">Upload Files</button>             
             <p id="uploadMsg">Only .txt files in English are currently accepted.</p>	
         </form>
@@ -23,7 +23,22 @@
         const fileInput = document.getElementById('fileInput');
         const mainForm = document.getElementById("mainForm");
         const fileList = document.getElementById("fileList");
-        
+
+        // Reset the input field when clicked to ensure that the change event is always triggered
+        fileInput.addEventListener('click', function() {
+            // Set the input value to null so that the change event will fire even if the same file is selected multiple times.
+            fileInput.value = null;
+        });
+
+        fileInput.addEventListener('change', function() {
+            // Handle file selection
+            const files = fileInput.files;
+            if (files.length > 0) {
+                console.log("Selected file: ${files[0].name}");
+            }
+        });
+            
+        // Handle file upload
         mainForm.addEventListener("submit", async function(event) {     
             // Prevent the default form submission       
             event.preventDefault();  
