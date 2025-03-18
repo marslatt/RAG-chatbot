@@ -82,10 +82,10 @@ class RagService:
             chunks = await text_splitter.atransform_documents(raw_documents)  
             logger.info(f"{len(chunks)} chunks created by CharacterTextSplitter.")
 
-            # Creates embeddings (mappings) for a collection of documents to be stored in the Chroma database. 
+            # Generates embeddings (mappings) for a collection of documents to be stored in the Chroma database. 
             # Stores embeddings as vectors (and optionally their metadata), allowing for efficient vector searches.
-            v_ids = await self.db.aadd_documents(chunks)
-            logger.info(f"{len(v_ids)} vectors added successfully to Chroma DB.")
+            embed_ids = await self.db.aadd_documents(chunks)
+            logger.info(f"{len(embed_ids)} embeddings added successfully to Chroma DB.")
         except Exception as e:
             err =  f"Error occured while adding documents to database: {str(e)}"
             logger.error(err)

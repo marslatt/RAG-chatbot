@@ -22,49 +22,87 @@
                 {{ 'AI' if key == 'ai' else 'You' }}: {{ item.values() | first }}
             </li>
         {% endfor %}
-        </ul>
+        </ul> 
         <textarea id="inputArea" placeholder="Type your message..."></textarea><br>
-        <button id="submitBtn">Send</button>  
+        <button id="submitBtn">Send</button> 
+        <div id="loading" class="loading-indicator" style="display: none;">
+            <!-- TODO: Add 'loading' indicator... -->
+        </div>        
     </div>   
-    
-    <script>
-        // TODO
 
-        // Get elements
+    <script>
+        // JavaScript goes here
         const inputArea = document.getElementById('inputArea');
         const submitBtn = document.getElementById('submitBtn');
         const conversation = document.getElementById('conversation');
+        const loadingIndicator = document.getElementById('loading');  
+
+        // Handle message sending
+        submitBtn.addEventListener('click', async function() {
+            const usrMessage = inputArea.value.trim();
+
+            // Check if the text is empty
+            if (usrMessage === "") { 
+                alert("Please enter a message.");
+                return;
+            }
+
+            // Add user message to conversation history 
+            addMessage(usrMessage, "You");
+            inputArea.value = "";  
+
+            // Show loading indicator
+            showLoadingIndicator(true);
+
+            // Create the data object to send in the request
+            const data = { text: usrMessage };
+
+            try {
+                // Send a POST request to the endpoint
+                const response = await fetch('/send', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data),
+                });
+
+                // Check for a successful response
+                if (!response.ok) {
+                    throw new Error(response.status);
+                }
+
+                // Parse the JSON response
+                const json = await response.json();
+                const aiMessage = json.message;
+
+                // Add AI message to conversation
+                addMessage(aiMessage, "AI");
+            } catch (error) {
+                const errMessage = "Error occurred while receiving an answer from the chatbot!";
+                console.error(errMessage, error.message);
+                alert(errMessage);
+            } finally {
+                // Hide loading indicator
+                showLoadingIndicator(false);
+            }
+        });
 
         // Function to add message to conversation
         function addMessage(message, name) {
             const messageItem = document.createElement('li');
-            messageItem.className = (name == "ai") ? "aiMsg" : "userMsg";
-            messageItem.textContent = message;
+            messageItem.className = (name === "AI") ? "aiMsg" : "userMsg";
+            messageItem.textContent = `${name}: ${message}`;
             conversation.appendChild(messageItem);
             conversation.scrollTop = conversation.scrollHeight;  // Scroll to the latest message
         }
 
-        // Handle button click
-        submitBtn.addEventListener('click', function() {
-            const message = inputArea.value.trim();
-            if (message) {
-                addMessage('You: ' + message, "user");  // Add user message
-                inputArea.value = '';  // Clear input area
-                inputArea.focus();
-                // Simulate a response (for demonstration)
-                setTimeout(() => {
-                    addMessage('Bot: This is a bot reply!', "ai");  // Add bot response
-                }, 1000);
+        // Show or hide loading indicator
+        function showLoadingIndicator(show) {
+            if (show) {
+                loadingIndicator.style.display = 'block';
+            } else {
+                loadingIndicator.style.display = 'none';
             }
-        });
-
-        // Handle Enter key press
-        inputArea.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                submitBtn.click();  // Trigger button click
-            }
-        });
+        }
     </script> 
 </body>
 </html>

@@ -18,17 +18,23 @@
         <ul id="fileList">
             <!-- Uploaded files will appear here -->
         </ul>
-        <form id="mainForm" method="POST" enctype="multipart/form-data">
+        <form id="fileForm" method="POST" enctype="multipart/form-data">
             <input type="file" id="fileInput"><br>
-            <button id="submitBtn" type="submit">Upload Files</button>             
+            <button id="submitBtn" type="submit">Upload Files</button>
+            <!-- button id="submitBtn" type="submit" multiple>Upload Files</button -->              
             <p id="uploadMsg">Only .txt files in English are currently accepted.</p>	
         </form>
+        <div id="loading" class="loading-indicator" style="display: none;">
+            <!-- TODO: Add 'loading' indicator... -->
+             Loading...
+        </div>   
     </div>
 
     <script> 
         const fileInput = document.getElementById('fileInput');
-        const mainForm = document.getElementById("mainForm");
+        const fileForm = document.getElementById("fileForm");
         const fileList = document.getElementById("fileList");
+        const loadingIndicator = document.getElementById('loading'); 
 
         // Reset the input field when clicked to ensure that the change event is always triggered
         fileInput.addEventListener('click', function() {
@@ -45,9 +51,12 @@
         });
             
         // Handle file upload
-        mainForm.addEventListener("submit", async function(event) {     
+        fileForm.addEventListener("submit", async function(event) {     
             // Prevent the default form submission       
             event.preventDefault();  
+
+            // Show loading indicator
+            showLoadingIndicator(true);
 
             // Get the files from the file input 
             const files = fileInput.files;             
@@ -69,34 +78,44 @@
                     body: formData, // Send the files in the request body
                 });
 
-                // Handle the response from the server
-                if (response.ok) {   
-                    // Collect JSON sent by the server
-                    const json = await response.json();                   
-                    console.log("Upload successful:", json);
-
-                    // Display the uploaded files                  
-                    Array.from(files).forEach(file => {
-                        const li = document.createElement("li");
-                        li.textContent = file.name;
-                        fileList.appendChild(li);
-                        // Scroll to the latest file
-                        fileList.scrollTop = fileList.scrollHeight;  
-                        }); 
-                    
-                    // Clear file input    
-                    fileInput.value = '';
-                } else {
-                    message = "Error occured while uploading document!";
-                    console.error(message, response.statusText); 
-                    alert(message);                 
+                // Check for a successful response  
+                if (!response.ok) {
+                    throw new Error(response.status);
                 }
+
+                // Collect JSON sent by the server
+                const json = await response.json();                   
+                console.log("Upload successful:", json);
+
+                // Display the uploaded files                  
+                Array.from(files).forEach(file => {
+                    const li = document.createElement("li");
+                    li.textContent = file.name;
+                    fileList.appendChild(li);
+                    // Scroll to the latest file
+                    fileList.scrollTop = fileList.scrollHeight;  
+                    }); 
+                
+                // Clear file input    
+                fileInput.value = ''; 
             } catch (error) { 
                 message = "Error occured while uploading document!";
                 console.error(message, error); 
                 alert(message);            
-            } 
+            } finally {
+                // Hide loading indicator
+                showLoadingIndicator(false);
+            }
         });
+
+        // Show or hide loading indicator
+        function showLoadingIndicator(show) {
+            if (show) {
+                loadingIndicator.style.display = 'block';
+            } else {
+                loadingIndicator.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>

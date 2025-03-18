@@ -1,4 +1,4 @@
-RAG-chatbot: FastAPI, OpenAI API, LangChain, Chroma DB, RAG
+RAG-chatbot: FastAPI, LangChain, Chroma DB, Python3 
 
 1. Install pipenv with 'pip install pipenv'  
 

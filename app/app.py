@@ -1,23 +1,6 @@
-''' 
-from app.routers import ping_router, rag_router
-from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI, HTTPException, Request  
-from services.service_provider import service_provider
-from fastapi.staticfiles import StaticFiles  
-from log import logger
-from fastapi.responses import HTMLResponse, RedirectResponse 
-from templates import templates
-from starlette.exceptions import HTTPException as StarletteHTTPException
-
-# https://fastapi.tiangolo.com/tutorial/bigger-applications
-# https://fastapi.tiangolo.com/tutorial/dependencies
-# https://fastapi.tiangolo.com/advanced/events/
-# https://fastapi.tiangolo.com/tutorial/handling-errors/#override-request-validation-exceptions
-'''
-
 from app.routers import ping_router, rag_router, chat_router
 from contextlib import asynccontextmanager
-from fastapi import Depends, FastAPI, HTTPException, Request 
+from fastapi import FastAPI, HTTPException, Request 
 from services.service_provider import service_provider
 from fastapi.staticfiles import StaticFiles  
 from log import logger
@@ -28,6 +11,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 # https://fastapi.tiangolo.com/tutorial/bigger-applications
 # https://fastapi.tiangolo.com/tutorial/dependencies
 # https://fastapi.tiangolo.com/advanced/events/
+# https://fastapi.tiangolo.com/tutorial/handling-errors
 # https://stackoverflow.com/questions/77041522/fastapi-lifespan-event-in-docker-container-running-not-executing-the-shutdown
 
 # Executed once at startup, before the application starts receiving requests. Useful for setting up resources 
@@ -56,7 +40,7 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     app = FastAPI(
         title="RAGChatbotApp",
-        summary="A simple chatbot with RAG, using FastAPI, LangChain and OpenAI.",
+        summary="A simple chatbot with RAG, using FastAPI, LangChain, ChromaDB.",
         version="0.0.1",
         lifespan=lifespan,
     ) 

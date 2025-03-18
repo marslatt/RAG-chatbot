@@ -22,8 +22,13 @@ class LlmService:
         '''
         Create conversational history-aware retrieval chain
         '''
+        cntx_sys_prompt = "Given a chat history and the latest user question " \
+                          "which might reference context in the chat history, " \
+                          "formulate a standalone question which can be understood " \
+                          "without the chat history. Do NOT answer the question, " \
+                          "just reformulate it if needed and otherwise return it as is."
         contextualized_prompt = ChatPromptTemplate.from_messages([
-            ("system", "Based on chat history and user question, make the question understandable without history."),
+            ("system", cntx_sys_prompt),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
         ])
@@ -32,8 +37,13 @@ class LlmService:
         # to the retriever. If there is history, the prompt and LLM will be used to generate a search query to be passed to the retriever.
         contextualized_retriever = create_history_aware_retriever(self.llm, retriever, contextualized_prompt)
 
+        qa_sys_prompt = "You are an assistant for question-answering tasks. " \
+                        "Use the following pieces of retrieved context to answer " \
+                        "the question. If you don't know the answer, say that you " \
+                        "don't know. Use three sentences maximum and keep the " \
+                        "answer concise.\n\n{context}"
         qa_prompt = ChatPromptTemplate.from_messages([
-            ("system", "Answer the user question based on the below context:\\n\\n{context}"),
+            ("system", qa_sys_prompt),
             MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
         ])
