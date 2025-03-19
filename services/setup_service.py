@@ -16,6 +16,7 @@ class SetupService:
         client = openai.OpenAI(api_key=OPENAI_API_KEY)
         try:
             client.models.list()
+            logger.info("OPENAI API key validated.") 
         except openai.AuthenticationError as e:
             err = f"Could not validate OpenAI API key: {str(e)}"
             logger.error(err)

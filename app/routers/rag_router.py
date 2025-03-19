@@ -15,7 +15,7 @@ rag_router = APIRouter()
 @rag_router.get("/upload", response_class=HTMLResponse)
 async def upload( 
     request: Request, 
-    ) -> HTMLResponse: 
+) -> HTMLResponse: 
     return templates.TemplateResponse(
         request=request, 
         name="upload.html",  
@@ -25,7 +25,7 @@ async def upload(
 async def process(
     request: Request,
     rag_service: RagService = Depends(service_provider.rag_service),
-    ) -> JSONResponse:
+) -> JSONResponse:
     try:
         form = await request.form() 
         for field in form:

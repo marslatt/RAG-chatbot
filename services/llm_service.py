@@ -5,6 +5,7 @@ from langchain.chains import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder 
 from langchain.vectorstores.base import VectorStoreRetriever
 from config.constants import OPENAI_API_KEY, OPENAI_LLM
+from log import logger
 
 # https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/
 # https://python.langchain.com/docs/concepts/async/
@@ -51,7 +52,7 @@ class LlmService:
         # Create a chain for passing a list of documents to the LLM model.
         document_chain = create_stuff_documents_chain(self.llm, qa_prompt)
 
-        # Create retrieval chain that retrieves documents and then passes them on.
+        # Create retrieval chain that retrieves documents and then passes them on. 
         self.chain = create_retrieval_chain(contextualized_retriever, document_chain)
 
     def configure_llm(self, retriever: VectorStoreRetriever):
@@ -59,30 +60,28 @@ class LlmService:
             model=OPENAI_LLM,
             openai_api_key=OPENAI_API_KEY
         )
-        self.chain = self._create_chain(retriever)
+        self._create_chain(retriever)   
+        logger.info("LLM initialized and retrieval chain configured.")      
 
     def get_history(self) -> list: 
         return self.chat_history 
+    
+    def delete_history(self): 
+        self.chat_history = []
+        # TODO Delete Chroma collection of uploaded files too
 
-    async def generate_response(self, user_input):
+    async def generate_answer(self, user_input) -> str:
         '''
         Generate response based on previous chat history and user input.
         '''
-        response = self.chain.ainvoke(
+        response = await self.chain.ainvoke(
             {
                 "chat_history": self.chat_history,
                 "input": user_input
             }
         )
-        # TODO
-        '''
-        await run_in_executor(
-            None, self.transform_documents, documents, **kwargs
-        )
-        '''
-
         answer = response['answer']
-        self.chat_history.append({"user" : f"{user_input}"})
-        self.chat_history.append({"ai" : f"{answer}"})
+        self.chat_history.append(("user", f"{user_input}"))
+        self.chat_history.append(("ai", f"{answer}"))
         return answer    
       

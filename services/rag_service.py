@@ -56,6 +56,7 @@ class RagService:
                 status_code=500, # 500 Internal Server Error
                 detail=err,
             )
+        logger.info("Chroma DB initialized and configured.") 
       
     async def add_docs(self):
         '''

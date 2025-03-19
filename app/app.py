@@ -20,8 +20,11 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 async def lifespan(app: FastAPI):
     # Setup lifespan routine.
     try:
+        setup_service = service_provider.setup_service()
+        setup_service.create_dirs()
+        setup_service.validate_api_key() 
         rag_service = service_provider.rag_service()
-        rag_service.configure_db()
+        rag_service.configure_db()        
         llm_service = service_provider.llm_service()
         llm_service.configure_llm(rag_service.get_retriever())
     except Exception as e:
@@ -32,8 +35,7 @@ async def lifespan(app: FastAPI):
             detail=err,
         )
     yield
-    # Clean up and release allocated resources.  # TODO
-    setup_service = service_provider.setup_service()
+    # Clean up and release allocated resources.  # TODO 
     setup_service.delete_dirs()
     logger.info("Finished clean up of allocated resources. Application is shutting down...")
 
@@ -44,7 +46,6 @@ def create_app() -> FastAPI:
         version="0.0.1",
         lifespan=lifespan,
     ) 
-
     app.mount("/css", StaticFiles(directory="templates/css"), name="css")
     app.include_router(router=ping_router) 
     app.include_router(router=rag_router)

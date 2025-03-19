@@ -62,7 +62,7 @@ body {
     /* margin-bottom: 10px; */
 }
 
-#submitBtn {
+#submitBtn, #deleteBtn {
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
@@ -74,6 +74,14 @@ body {
 #submitBtn:hover {
     background-color: #45a049;
 } 
+
+#deleteBtn {
+    background-color: #959d96;
+}
+
+#deleteBtn:hover {
+    background-color: #797d79;
+}
 
 #conversation {
     list-style-type: none;

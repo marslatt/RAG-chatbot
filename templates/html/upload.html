@@ -26,7 +26,6 @@
         </form>
         <div id="loading" class="loading-indicator" style="display: none;">
             <!-- TODO: Add 'loading' indicator... -->
-             Loading...
         </div>   
     </div>
 
@@ -56,7 +55,7 @@
             event.preventDefault();  
 
             // Show loading indicator
-            showLoadingIndicator(true);
+            loadingIndicator.style.display = 'block';
 
             // Get the files from the file input 
             const files = fileInput.files;             
@@ -72,7 +71,7 @@
             }
 
             try {
-                // Send the FormData to the server using fetch
+                // Send the FormData with POST request to the server
                 const response = await fetch('/process', {
                     method: 'POST',
                     body: formData, // Send the files in the request body
@@ -104,18 +103,20 @@
                 alert(message);            
             } finally {
                 // Hide loading indicator
-                showLoadingIndicator(false);
-            }
-        });
-
-        // Show or hide loading indicator
-        function showLoadingIndicator(show) {
-            if (show) {
-                loadingIndicator.style.display = 'block';
-            } else {
                 loadingIndicator.style.display = 'none';
             }
-        }
+        });  
+
+        /* 
+        In JavaScript, async and await are used to work with asynchronous operations and Promises in a more readable way.
+        Promise: An object that represents the eventual completion (or failure) of an asynchronous operation, and its resulting value.  
+        async: A keyword used to declare a function as asynchronous. An asynchronous function always returns a Promise. 
+               If a value is returned from an async function, it is wrapped in a Promise. 
+               If an exception is thrown inside the function, it returns a rejected Promise.
+        await: Used inside an async function to pause the execution of the function until the Promise is resolved or rejected. 
+               It waits for the Promise to complete and returns the resolved value. 
+
+        */
     </script>
 </body>
 </html>

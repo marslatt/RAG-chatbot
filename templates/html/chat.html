@@ -16,15 +16,15 @@
             </a>	  
         </div>        
         <ul id="conversation"> 
-        {% for item in history %}
-            {% set key = item.keys() | first %}
-            <li class="{{ 'aiMsg' if key == 'ai' else 'userMsg' }}">
-                {{ 'AI' if key == 'ai' else 'You' }}: {{ item.values() | first }}
+        {% for item in history %} 
+            <li class="{{ 'aiMsg' if item[0] == 'ai' else 'userMsg' }}">
+                {{ 'AI' if item[0] == 'ai' else 'You' }}: {{ item[1] }}
             </li>
         {% endfor %}
         </ul> 
         <textarea id="inputArea" placeholder="Type your message..."></textarea><br>
         <button id="submitBtn">Send</button> 
+        <button id="deleteBtn">Delete chat</button>
         <div id="loading" class="loading-indicator" style="display: none;">
             <!-- TODO: Add 'loading' indicator... -->
         </div>        
@@ -52,13 +52,13 @@
             inputArea.value = "";  
 
             // Show loading indicator
-            showLoadingIndicator(true);
+            loadingIndicator.style.display = 'block';
 
             // Create the data object to send in the request
             const data = { text: usrMessage };
 
             try {
-                // Send a POST request to the endpoint
+                // Send data with POST request to the server
                 const response = await fetch('/send', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -82,7 +82,7 @@
                 alert(errMessage);
             } finally {
                 // Hide loading indicator
-                showLoadingIndicator(false);
+                loadingIndicator.style.display = 'none';
             }
         });
 
@@ -93,16 +93,38 @@
             messageItem.textContent = `${name}: ${message}`;
             conversation.appendChild(messageItem);
             conversation.scrollTop = conversation.scrollHeight;  // Scroll to the latest message
-        }
+        } 
 
-        // Show or hide loading indicator
-        function showLoadingIndicator(show) {
-            if (show) {
-                loadingIndicator.style.display = 'block';
-            } else {
+        deleteBtn.addEventListener('click', async function() {
+            // Show loading indicator
+            loadingIndicator.style.display = 'block'; 
+            
+            try {
+                // Make an DELETE request to the server to delete the history
+                const response = await fetch('/delete', {
+                    method: 'DELETE', 
+                });
+
+                // Check for a successful response  
+                if (!response.ok) {
+                    throw new Error(response.status);
+                }
+
+                // Collect JSON sent by the server
+                const json = await response.json();                   
+                console.log("Upload successful:", json);
+        
+                // Clear the conversation content  
+                conversation.innerHTML = '';    
+            } catch (error) { 
+                    message = "Error occured while deleting history!";
+                    console.error(message, error); 
+                    alert(message);            
+            } finally {
+                // Hide loading indicator
                 loadingIndicator.style.display = 'none';
-            }
-        }
+            }            
+        });
     </script> 
 </body>
 </html>
