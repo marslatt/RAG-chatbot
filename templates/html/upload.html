@@ -24,8 +24,8 @@
             <!-- button id="submitBtn" type="submit" multiple>Upload Files</button -->              
             <p id="uploadMsg">Only .txt files in English are currently accepted.</p>	
         </form>
-        <div id="loading" class="loading-indicator" style="display: none;">
-            <!-- TODO: Add 'loading' indicator... -->
+        <div id="loading" style="display: none;">
+            <div id="spinner"></div>
         </div>   
     </div>
 
@@ -55,7 +55,7 @@
             event.preventDefault();  
 
             // Show loading indicator
-            loadingIndicator.style.display = 'block';
+            loadingIndicator.style.display = 'flex';
 
             // Get the files from the file input 
             const files = fileInput.files;             

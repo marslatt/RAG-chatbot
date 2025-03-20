@@ -25,8 +25,8 @@
         <textarea id="inputArea" placeholder="Type your message..."></textarea><br>
         <button id="submitBtn">Send</button> 
         <button id="deleteBtn">Delete chat</button>
-        <div id="loading" class="loading-indicator" style="display: none;">
-            <!-- TODO: Add 'loading' indicator... -->
+        <div id="loading" style="display: none;">
+            <div id="spinner"></div>
         </div>        
     </div>   
 
@@ -52,7 +52,7 @@
             inputArea.value = "";  
 
             // Show loading indicator
-            loadingIndicator.style.display = 'block';
+            loadingIndicator.style.display = 'flex';
 
             // Create the data object to send in the request
             const data = { text: usrMessage };
@@ -97,7 +97,7 @@
 
         deleteBtn.addEventListener('click', async function() {
             // Show loading indicator
-            loadingIndicator.style.display = 'block'; 
+            loadingIndicator.style.display = 'flex'; 
             
             try {
                 // Make an DELETE request to the server to delete the history

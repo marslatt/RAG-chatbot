@@ -81,7 +81,7 @@ class LlmService:
             }
         )
         answer = response['answer']
-        self.chat_history.append(("user", f"{user_input}"))
-        self.chat_history.append(("ai", f"{answer}"))
+        self.chat_history.append(("user", user_input))
+        self.chat_history.append(("ai", answer))
         return answer    
       
