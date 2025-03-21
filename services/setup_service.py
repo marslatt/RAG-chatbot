@@ -29,44 +29,25 @@ class SetupService:
         '''
         Create 'chroma', 'files' and 'db' directories in non existant
         ''' 
-        try:
-            if not os.path.exists(CHROMA_DIR):
-                os.makedirs(CHROMA_DIR)
-
+        try:            
             if os.path.exists(FILES_DIR):
                 shutil.rmtree(os.path.abspath(FILES_DIR))
-            os.makedirs(FILES_DIR)
+                logger.info("Deleted 'files' directory.")
             
             if os.path.exists(DB_DIR):
                 shutil.rmtree(os.path.abspath(DB_DIR))
-            os.makedirs(DB_DIR) 
+                logger.info("Deleted 'db' directory.")            
 
-            logger.info("Created 'chroma', 'files' and 'db' directories.")
+            if os.path.exists(CHROMA_DIR):
+                shutil.rmtree(os.path.abspath(CHROMA_DIR))
+                logger.info("Deleted 'chroma' directory.")
+
+            os.makedirs(CHROMA_DIR)
+            os.makedirs(FILES_DIR)
+            os.makedirs(DB_DIR) 
+            logger.info("Created new 'chroma', 'files' and 'db' directories.")
         except Exception as e:
             err =  f"Error occured while creating directories: {str(e)}"
-            logger.error(err)
-            raise HTTPException(
-                status_code=500, # 500 Internal Server Error
-                detail=err,
-            )     
-
-    def delete_dirs(self):
-        '''
-        Delete 'chroma', 'files' and 'db' directories if existant
-        '''     
-        try:    
-            if os.path.exists(FILES_DIR):
-                shutil.rmtree(os.path.abspath(FILES_DIR))
-            
-            if os.path.exists(DB_DIR):
-                shutil.rmtree(os.path.abspath(DB_DIR))  
-
-            if not os.path.exists(CHROMA_DIR):
-                shutil.rmtree(os.path.abspath(CHROMA_DIR))
-        
-            logger.info("Deleted 'chroma', 'files' and 'db' directories.")
-        except Exception as e:
-            err =  f"Error occured while deleting directories: {str(e)}"
             logger.error(err)
             raise HTTPException(
                 status_code=500, # 500 Internal Server Error

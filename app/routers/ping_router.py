@@ -16,19 +16,19 @@ async def ping(
         title = request.app.title
         version = request.app.version 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        return templates.TemplateResponse(
+            request=request, 
+            name="ping.html", 
+            context={"title": title, "version": version, "timestamp" : timestamp}
+        )
     except Exception as e: 
         err = f"Error occured while generating ping message: {str(e)}"
         logger.error(err)
         raise HTTPException(
-            status_code=404, # 404 Not Found
+            status_code=400, # 400 Bad Request
             detail=err,
         ) 
-    return templates.TemplateResponse(
-        request=request, 
-        name="ping.html", 
-        context={"title": title, "version": version, "timestamp" : timestamp}
-    )
-
+    
 # TODO Pydantic validation
 # @ping_router.get(path="/ping", response_model=BaseResponse)
 # https://dev.to/jamesbmour/part-3-pydantic-data-models-4gnb

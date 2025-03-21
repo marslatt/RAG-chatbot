@@ -19,6 +19,7 @@ class RagService:
     ''' 
     def __init__(self):
         self.db = None  
+        self.collection = None
     
     def configure_db(self):
         '''
@@ -30,33 +31,30 @@ class RagService:
         try: 
             # Create or load collection if exists
             embedding_func = OpenAIEmbeddingFunction(api_key=OPENAI_API_KEY)
-            collection = client.get_or_create_collection(
+            self.collection = client.get_or_create_collection(
                 name=clname,
                 embedding_function=embedding_func
-            ) 
+            )             
+            if self.collection is None:
+                raise Exception ("Error occured while creating or loading collection")
+
+            embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+            self.db = Chroma(
+                client=client,
+                collection_name=clname,
+                embedding_function=embeddings,
+                persist_directory=DB_DIR,
+            )  
+            if self.db is None:
+                raise Exception("Chroma DB is not initialized properly!") 
+            logger.info("Chroma DB initialized and configured.") 
         except Exception as e:
-            err = f"Error occured while creating or loading collection: {str(e)}"
+            err = f"Error occured while creating Chroma DB: {str(e)}"
             logger.error(err)
             raise HTTPException(
                 status_code=500, # 500 Internal Server Error
                 detail=err,
             )  
- 
-        embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-        self.db = Chroma(
-            client=client,
-            collection_name=clname,
-            embedding_function=embeddings,
-            persist_directory=DB_DIR,
-        )  
-        if self.db is None:
-            err = "Chroma DB is not initialized properly!"
-            logger.error(err)
-            raise HTTPException(
-                status_code=500, # 500 Internal Server Error
-                detail=err,
-            )
-        logger.info("Chroma DB initialized and configured.") 
       
     async def add_docs(self):
         '''
@@ -104,8 +102,17 @@ class RagService:
     def get_retriever(self) -> VectorStoreRetriever: 
         return self.db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
         # return self.db.as_retriever()
-
-    # TODO
+ 
     def delete_docs(self): 
-        # client.delete_collection(name=clname)
-        pass
+        '''
+        Delete douments from collection.
+        '''
+        doc_ids = self.collection.get()["ids"]
+        self.collection.delete(ids=doc_ids)
+        
+        # self.db.delete_collection("doc")
+        # self.db.reset_collection(name="doc")
+        # self.client.delete_collection(name="doc")
+        # self.client.create_collection(name="doc")
+        # self.db._client._system.stop()
+         

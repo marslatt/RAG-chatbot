@@ -5,6 +5,7 @@ from langchain.chains import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder 
 from langchain.vectorstores.base import VectorStoreRetriever
 from config.constants import OPENAI_API_KEY, OPENAI_LLM
+from fastapi import HTTPException 
 from log import logger
 
 # https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/
@@ -67,21 +68,28 @@ class LlmService:
         return self.chat_history 
     
     def delete_history(self): 
-        self.chat_history = []
-        # TODO Delete Chroma collection of uploaded files too
+        self.chat_history = [] 
 
     async def generate_answer(self, user_input) -> str:
         '''
         Generate response based on previous chat history and user input.
         '''
-        response = await self.chain.ainvoke(
-            {
-                "chat_history": self.chat_history,
-                "input": user_input
-            }
-        )
-        answer = response['answer']
-        self.chat_history.append(("user", user_input))
-        self.chat_history.append(("ai", answer))
-        return answer    
+        try:
+            response = await self.chain.ainvoke(
+                {
+                    "chat_history": self.chat_history,
+                    "input": user_input
+                }
+            )
+            answer = response['answer']
+            self.chat_history.append(("user", user_input))
+            self.chat_history.append(("ai", answer))
+            return answer
+        except Exception as e:
+            err =  f"Error occured while generating response: {str(e)}"
+            logger.error(err)
+            raise HTTPException(
+                status_code=500, # 500 Internal Server Error
+                detail=err,
+            )      
       

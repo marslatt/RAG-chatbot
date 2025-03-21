@@ -27,6 +27,7 @@ async def lifespan(app: FastAPI):
         rag_service.configure_db()        
         llm_service = service_provider.llm_service()
         llm_service.configure_llm(rag_service.get_retriever())
+        logger.info("Configuring application on startup completed successfully.")
     except Exception as e:
         err = f"Error occured while creating FastAPI app: {str(e)}"
         logger.error(err)
@@ -35,8 +36,8 @@ async def lifespan(app: FastAPI):
             detail=err,
         )
     yield
-    # Clean up and release allocated resources.  # TODO 
-    setup_service.delete_dirs()
+    # Clean up and release allocated resources.  
+    rag_service.delete_docs() 
     logger.info("Finished clean up of allocated resources. Application is shutting down...")
 
 def create_app() -> FastAPI:

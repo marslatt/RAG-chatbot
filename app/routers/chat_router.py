@@ -3,6 +3,7 @@ from fastapi.routing import APIRouter, Request
 from log.logger import logger
 from services import service_provider 
 from services.llm_service import LlmService 
+from services.rag_service import RagService 
 from fastapi.responses import JSONResponse 
 from fastapi.responses import HTMLResponse  
 from templates import templates
@@ -29,34 +30,28 @@ async def send(
     request: Request,
     llm_service: LlmService = Depends(service_provider.llm_service),
 ) -> JSONResponse:
-    received_text = data.get("text", "")
-    if not received_text:
-        err = "No text provided or the text is empty."
-        logger.error(err)
-        return JSONResponse(
-            content={"message": err}, 
-            status_code=422  # 422 Unprocessable Content
-        )
     try:
+        received_text = data.get("text", "")
+        if not received_text:
+            raise Exception("No text provided or the text is empty.")    
         ai_msg = await llm_service.generate_answer(received_text)
+        return JSONResponse(status_code=200, content={"message": ai_msg}) 
     except Exception as e:
         err = f"Error occured while generating response: {str(e)}"
         logger.error(err)
-        return JSONResponse(status_code=422, content={"error": err})  # 400 Bad Request
-
-    return JSONResponse(status_code=200, content={"message": ai_msg}) 
+        return JSONResponse(status_code=422, content={"error": err}) # 422 Unprocessable Content  
 
 @chat_router.delete('/delete')
 async def delete(
     request: Request,    
     llm_service: LlmService = Depends(service_provider.llm_service),
+    rag_service: RagService = Depends(service_provider.rag_service),
 ) -> JSONResponse:    
     try:
         llm_service.delete_history()
+        rag_service.delete_docs()
+        return JSONResponse(status_code=200, content={"message": "History successfully deleted."})  # 200 OK
     except Exception as e:
         err = f"Error occured while deleting history: {str(e)}"
         logger.error(err)
-        return JSONResponse(status_code=422, content={"error": err})  # 400 Bad Request
-    
-    return JSONResponse(status_code=200, content={"message": "History successfully deleted."})  # 200 OK
-     
+        return JSONResponse(status_code=400, content={"error": err})  # 400 Bad Request
