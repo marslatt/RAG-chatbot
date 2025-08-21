@@ -17,5 +17,6 @@ pydantic = "~=2.9.2"
 jinja2 = "*"
 python-multipart = "*"
 uvicorn = "*"
+pymupdf = "*" 
 
 [dev-packages]

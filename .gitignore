@@ -1,7 +1,8 @@
 __pycache__
-.env
+config/.env
 .bin
 .sqlite3
 .sqlite3-journal
 chroma/
 .log
+.vscode

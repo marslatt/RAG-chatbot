@@ -9,7 +9,7 @@ class SetupService:
     '''
     Service to setup and validate configuration or other data. 
     '''   
-    def validate_api_key(self): 
+    def _validate_api_key(self): 
         '''
         Load and validate OpenAI API key in .env file   
         '''   
@@ -25,7 +25,7 @@ class SetupService:
                 detail=err,
             )   
  
-    def create_dirs(self): 
+    def _create_dirs(self): 
         '''
         Create 'chroma', 'files' and 'db' directories in non existant
         ''' 
@@ -53,3 +53,8 @@ class SetupService:
                 status_code=500, # 500 Internal Server Error
                 detail=err,
             )     
+
+    def configure(self): 
+        self._validate_api_key()        
+        self._create_dirs()
+        logger.info("Setup service configured.") 

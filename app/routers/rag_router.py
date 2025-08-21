@@ -31,15 +31,15 @@ async def process(
         for field in form:
             elem = form[field]
             if isinstance(elem, UploadFile):
-                filename = os.path.join(FILES_DIR, elem.filename)  
+                file_path = os.path.join(FILES_DIR, elem.filename)  
                 content = elem.file.read() 
-                with open(filename, 'wb') as f:
+                with open(file_path, 'wb') as f:
                     f.write(content)   
-                logger.info(f"{filename} uploaded successfully.")    
-        await rag_service.add_docs()  
-        return JSONResponse(status_code=200, content={"success": "Documents uploaded successfully."})            
+                logger.info(f"{file_path} uploaded successfully.")    
+        await rag_service.add_doc(file_path)  
+        return JSONResponse(status_code=200, content={"success": "Document uploaded successfully."})            
     except Exception as e:
-        err = f"Error occured while uploading documents: {str(e)}"
+        err = f"Error occured while uploading document: {str(e)}"
         logger.error(err)
         return JSONResponse(status_code=422, content={"error": err})  # 422 Unprocessable Content
  

@@ -20,13 +20,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 async def lifespan(app: FastAPI):
     # Setup lifespan routine.
     try:
+        # TODO
         setup_service = service_provider.setup_service()
-        setup_service.create_dirs()
-        setup_service.validate_api_key() 
-        rag_service = service_provider.rag_service()
-        rag_service.configure_db()        
-        llm_service = service_provider.llm_service()
-        llm_service.configure_llm(rag_service.get_retriever())
+        rag_service = service_provider.rag_service() 
+        chat_service = service_provider.chat_service()        
         logger.info("Configuring application on startup completed successfully.")
     except Exception as e:
         err = f"Error occured while creating FastAPI app: {str(e)}"

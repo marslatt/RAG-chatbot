@@ -10,7 +10,7 @@
 <body>
     <div class="container">	 
         <div class="header">
-            <h2>Upload files to RAG database</h2>        
+            <h2>Upload PDF files</h2>        
             <a href="javascript:if (document.referrer) { history.back(); } else { window.location.href = '/chat'; }" class="nav-link">            
                 <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back to chat
             </a>	  
@@ -19,10 +19,9 @@
             <!-- Uploaded files will appear here -->
         </ul>
         <form id="fileForm" method="POST" enctype="multipart/form-data">
-            <input type="file" id="fileInput"><br>
-            <button id="submitBtn" type="submit">Upload Files</button>
-            <!-- button id="submitBtn" type="submit" multiple>Upload Files</button -->              
-            <p id="uploadMsg">Only .txt files in English are currently accepted.</p>	
+            <input type="file" id="fileInput" accept="application/pdf"><br>
+            <button id="submitBtn" type="submit">Upload PDF</button>
+            <!-- button id="submitBtn" type="submit" multiple>Upload Files</button --> 
         </form>
         <div id="loading" style="display: none;">
             <div id="spinner"></div>
@@ -60,7 +59,7 @@
             // Get the files from the file input 
             const files = fileInput.files;             
             if (files.length === 0) { 
-                alert("Please select files to upload.");
+                alert("Please select a file to upload.");
                 return;
             }
             
@@ -98,7 +97,7 @@
                 // Clear file input    
                 fileInput.value = ''; 
             } catch (error) { 
-                message = "Error occured while uploading document!";
+                message = "Error occured while uploading a document!";
                 console.error(message, error); 
                 alert(message);            
             } finally {
