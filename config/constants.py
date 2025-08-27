@@ -6,7 +6,7 @@ load_dotenv(env_file)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") 
 
-OPENAI_LLM = "gpt-4o"
+OPENAI_LLM = "gpt-4.1-mini"
 
 CONFIG_DIR = "." + os.sep + "config" 
 

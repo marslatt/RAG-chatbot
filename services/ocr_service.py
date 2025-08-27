@@ -9,8 +9,14 @@ from langchain_core.documents import Document
 # from langchain.schema import Document
 import os
 import fitz
+import asyncio
+import time 
 
 # https://python.langchain.com/docs/how_to/multimodal_inputs/
+
+MAX_CONCURRENT = 3
+MAX_ATTEMPTS = 5
+BASE_DELAY = 2
 
 class OcrService:
     def __init__(self):
@@ -49,10 +55,11 @@ class OcrService:
         self._create_chain()
         logger.info("OCR service configured.")
 
+    '''
     def transcribe(self, file_path) -> str:
-        '''
-        Transcribe a file page by page 
-        '''
+        
+        # Transcribe a file page by page 
+        
         documents = []
 
         try:
@@ -78,3 +85,56 @@ class OcrService:
                 status_code=500,
                 detail=err,
             )
+    '''
+
+    async def transcribe_page(self, page_bytes, page_num, file_path):
+        '''
+        Transcribe a single page using OCR pipeline.
+        ''' 
+        # Convert raw image bytes to base64 string
+        image_b64 = base64.b64encode(page_bytes).decode("utf-8")
+        # Transcribe and add metadata 
+        text = await self._chain.ainvoke({"image": image_b64})
+        if not text:
+            raise ValueError(f"Empty transcription result for page {page_num}")
+        logger.info(f"Transcribed page {page_num} of {file_path}.") 
+        return Document(page_content=text, metadata={"source": os.path.basename(file_path), "page": page_num})    
+
+    async def transcribe(self, file_path) -> list[Document]:
+        '''
+        Transcribe a file page by page asynchronously.
+        '''
+        start = time.time()
+        sem = asyncio.Semaphore(MAX_CONCURRENT)
+        
+        async def sem_task(page_bytes, page_num, file_path):
+            for attempt in range(1, MAX_ATTEMPTS + 1):                
+                try:
+                    async with sem:
+                        return await self.transcribe_page(page_bytes, page_num, file_path)
+                except Exception as e:                        
+                    wait_time = BASE_DELAY * attempt 
+                    logger.error(f"{type(e).__name__}: on page {page_num} in {file_path}. Retrying in {wait_time}s.")                            
+                    await asyncio.sleep(wait_time)                            
+            # Return empty document if transcription unsuccessfull for MAX_ATTEMPTS.  
+            return Document(page_content="", metadata={"source": os.path.basename(file_path), "page": page_num})    
+        
+        try:
+            with fitz.open(file_path) as pdf_doc:   
+                rendered_pages = [
+                    (page_num, page.get_pixmap(dpi=300).tobytes("png"))
+                    for page_num, page in enumerate(pdf_doc, start=1)
+                ]
+            
+            tasks = [asyncio.create_task(sem_task(page_bytes, page_num, file_path)) for page_num, page_bytes in rendered_pages] 
+            results = await asyncio.gather(*tasks, return_exceptions=True) # TODO
+            end = time.time()  
+            logger.info(f"Transcribed document {file_path} in {end - start}s.") 
+            return results 
+        except Exception as e:
+            err = f"Error occured while transcribing {file_path}: {str(e)}"
+            logger.error(err)
+            raise HTTPException(
+                status_code=500,
+                detail=err,
+            )        

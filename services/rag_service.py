@@ -8,10 +8,11 @@ from langchain_chroma import Chroma
 from langchain.vectorstores.base import VectorStoreRetriever
 from langchain_openai import OpenAIEmbeddings 
 from langchain_core.documents import Document
-from log import logger
-from fastapi import HTTPException 
-import os
 from services.ocr_service import OcrService
+from fastapi import HTTPException 
+from log import logger
+import os
+import time 
 
 # https://medium.com/the-modern-scientist/building-generative-ai-applications-using-langchain-and-openai-apis-ee3212400630
 
@@ -70,11 +71,14 @@ class RagService:
         ''' 
         try:
             # Transcribe file page by page 
-            raw_documents = self._ocr_service.transcribe(file_path)    
-            logger.info(f"{len(raw_documents)} documents received after transcribing.")    
+            start_time = time.perf_counter() 
+            raw_documents = await self._ocr_service.transcribe(file_path)
+            end_time = time.perf_counter()   
+            logger.info(f"{len(raw_documents)} documents received after transcribing.")
+            logger.info(f"Transcription of '{file_path}' took {(end_time - start_time):.2f} seconds.")   
             
             text_splitter = CharacterTextSplitter(  # with CharacterTextSplitter 1 token ≈ 4 characters in English
-                separator=".",  # split on a full-stop
+                separator=r"(?<=[\.\?\!\n])", 
                 chunk_size=1500, # (size in chars) A4/English ≈ 450–700 words ≈ 2500–4000 chars ≈ 600-1000 tokens/page
                 chunk_overlap=200  # overlap for safety to avoid loss of information
             ) 
