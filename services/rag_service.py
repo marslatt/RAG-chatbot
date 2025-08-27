@@ -73,10 +73,10 @@ class RagService:
             raw_documents = self._ocr_service.transcribe(file_path)    
             logger.info(f"{len(raw_documents)} documents received after transcribing.")    
             
-            text_splitter = CharacterTextSplitter(
+            text_splitter = CharacterTextSplitter(  # with CharacterTextSplitter 1 token ≈ 4 characters in English
                 separator=".",  # split on a full-stop
-                chunk_size=2000, # 8000 if one full page = one chunk
-                chunk_overlap=50  # overlap just for safety to avoid loss of information
+                chunk_size=1500, # (size in chars) A4/English ≈ 450–700 words ≈ 2500–4000 chars ≈ 600-1000 tokens/page
+                chunk_overlap=200  # overlap for safety to avoid loss of information
             ) 
                 
             # Takes in a list of documents, splits each document into smaller chunks and returns a list of text chunks.
