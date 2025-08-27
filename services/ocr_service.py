@@ -55,39 +55,7 @@ class OcrService:
         self._create_chain()
         logger.info("OCR service configured.")
 
-    '''
-    def transcribe(self, file_path) -> str:
-        
-        # Transcribe a file page by page 
-        
-        documents = []
-
-        try:
-            with fitz.open(file_path) as pdf_doc:
-                for page_num, page in enumerate(pdf_doc):
-                    # Render doc page to image, convert to raw image bytes and then to base64 string
-                    pix = page.get_pixmap(dpi=300)  
-                    image_bytes = pix.tobytes("png")  
-                    image_b64 = base64.b64encode(image_bytes).decode("utf-8") 
-
-                    # Transcribe and add metadata
-                    text_content = self._chain.invoke({"image": image_b64}) 
-                    if text_content:
-                        documents.append(Document(
-                            page_content=text_content,
-                            metadata={"source": os.path.basename(file_path), "page": page_num + 1}
-                        ))
-            return documents
-        except Exception as e:
-            err = f"Error occured while transcribing {file_path}: {str(e)}"
-            logger.error(err)
-            raise HTTPException(
-                status_code=500,
-                detail=err,
-            )
-    '''
-
-    async def transcribe_page(self, page_bytes, page_num, file_path):
+    async def transcribe_page(self, page_num, page_bytes, file_path):
         '''
         Transcribe a single page using OCR pipeline.
         ''' 
@@ -107,11 +75,11 @@ class OcrService:
         start = time.time()
         sem = asyncio.Semaphore(MAX_CONCURRENT)
         
-        async def sem_task(page_bytes, page_num, file_path):
+        async def sem_task(page_num, page_bytes, file_path):
             for attempt in range(1, MAX_ATTEMPTS + 1):                
                 try:
                     async with sem:
-                        return await self.transcribe_page(page_bytes, page_num, file_path)
+                        return await self.transcribe_page(page_num, page_bytes, file_path)
                 except Exception as e:                        
                     wait_time = BASE_DELAY * attempt 
                     logger.error(f"{type(e).__name__}: on page {page_num} in {file_path}. Retrying in {wait_time}s.")                            
@@ -126,10 +94,10 @@ class OcrService:
                     for page_num, page in enumerate(pdf_doc, start=1)
                 ]
             
-            tasks = [asyncio.create_task(sem_task(page_bytes, page_num, file_path)) for page_num, page_bytes in rendered_pages] 
+            tasks = [asyncio.create_task(sem_task(page_num, page_bytes, file_path)) for page_num, page_bytes in rendered_pages] 
             results = await asyncio.gather(*tasks, return_exceptions=True) # TODO
             end = time.time()  
-            logger.info(f"Transcribed document {file_path} in {end - start}s.") 
+            logger.info(f"Transcribed {len(results)} pages of document {file_path} in {end - start}s.") 
             return results 
         except Exception as e:
             err = f"Error occured while transcribing {file_path}: {str(e)}"
